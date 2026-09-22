@@ -1,19 +1,145 @@
 {
   "redirects": [
-    { "source": "/project/polycarbonate-roofing-sheets-malaysia", "destination": "/products/#solid-polycarbonate", "permanent": true },
-    { "source": "/project/multi-wall-hollow-polycarbonate-sheet", "destination": "/products/#hollow-polycarbonate", "permanent": true },
-    { "source": "/project/corrugated-polycarbonate-sheet", "destination": "/products/#corrugated-polycarbonate", "permanent": true },
-    { "source": "/project/acrylic-sheets-pmma", "destination": "/products/#solid-acrylic", "permanent": true },
-    { "source": "/project/aluminium-composite-panel", "destination": "/products/#aluminium-composite-panel", "permanent": true },
-    { "source": "/project/metal-roofing-sheet", "destination": "/products/#metal-roofing", "permanent": true },
-    { "source": "/services/commercials", "destination": "/applications/#commercial", "permanent": true },
-    { "source": "/services/epc-project", "destination": "/applications/#epc", "permanent": true },
-    { "source": "/services/high-rise-building", "destination": "/applications/#high-rise", "permanent": true },
-    { "source": "/services/industrial", "destination": "/applications/#industrial", "permanent": true },
-    { "source": "/services/infrastructure", "destination": "/applications/#infrastructure", "permanent": true },
-    { "source": "/services/shopping-mall", "destination": "/applications/#shopping-mall", "permanent": true },
-    { "source": "/services", "destination": "/applications/", "permanent": true },
-    { "source": "/project", "destination": "/products/", "permanent": true },
-    { "source": "/news-events", "destination": "/", "permanent": true }
+    {
+      "source": "/project/polycarbonate-roofing-sheets-malaysia",
+      "destination": "/products/#solid-polycarbonate",
+      "permanent": true
+    },
+    {
+      "source": "/project/multi-wall-hollow-polycarbonate-sheet",
+      "destination": "/products/#hollow-polycarbonate",
+      "permanent": true
+    },
+    {
+      "source": "/project/corrugated-polycarbonate-sheet",
+      "destination": "/products/#corrugated-polycarbonate",
+      "permanent": true
+    },
+    {
+      "source": "/project/acrylic-sheets-pmma",
+      "destination": "/products/#solid-acrylic",
+      "permanent": true
+    },
+    {
+      "source": "/project/aluminium-composite-panel",
+      "destination": "/products/#aluminium-composite-panel",
+      "permanent": true
+    },
+    {
+      "source": "/project/metal-roofing-sheet",
+      "destination": "/products/#metal-roofing",
+      "permanent": true
+    },
+    {
+      "source": "/services/commercials",
+      "destination": "/applications/#commercial",
+      "permanent": true
+    },
+    {
+      "source": "/services/epc-project",
+      "destination": "/applications/#epc",
+      "permanent": true
+    },
+    {
+      "source": "/services/high-rise-building",
+      "destination": "/applications/#high-rise",
+      "permanent": true
+    },
+    {
+      "source": "/services/industrial",
+      "destination": "/applications/#industrial",
+      "permanent": true
+    },
+    {
+      "source": "/services/infrastructure",
+      "destination": "/applications/#infrastructure",
+      "permanent": true
+    },
+    {
+      "source": "/services/shopping-mall",
+      "destination": "/applications/#shopping-mall",
+      "permanent": true
+    },
+    {
+      "source": "/services",
+      "destination": "/applications/",
+      "permanent": true
+    },
+    {
+      "source": "/project",
+      "destination": "/products/",
+      "permanent": true
+    },
+    {
+      "source": "/news-events",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/2026/:path*",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/sample-page",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/company-presentation",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/awwards-certifications-awards",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/investor-relations",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/annual-report",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/career",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/footer",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/post-navigation-area",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/xmlrpc.php",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/feed",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/comments/feed",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/wp-admin/:path*",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/wp-login.php",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/wp-content/:path*",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/wp-includes/:path*",
+      "destination": "/api/gone"
+    }
   ]
 }
