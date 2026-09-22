@@ -78,7 +78,15 @@
   ],
   "rewrites": [
     {
-      "source": "/2026/:path*",
+      "source": "/2026",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/2026/",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/2026/(.*)",
       "destination": "/api/gone"
     },
     {
@@ -86,7 +94,15 @@
       "destination": "/api/gone"
     },
     {
+      "source": "/sample-page/",
+      "destination": "/api/gone"
+    },
+    {
       "source": "/company-presentation",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/company-presentation/",
       "destination": "/api/gone"
     },
     {
@@ -94,7 +110,15 @@
       "destination": "/api/gone"
     },
     {
+      "source": "/awwards-certifications-awards/",
+      "destination": "/api/gone"
+    },
+    {
       "source": "/investor-relations",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/investor-relations/",
       "destination": "/api/gone"
     },
     {
@@ -102,7 +126,15 @@
       "destination": "/api/gone"
     },
     {
+      "source": "/annual-report/",
+      "destination": "/api/gone"
+    },
+    {
       "source": "/career",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/career/",
       "destination": "/api/gone"
     },
     {
@@ -110,7 +142,15 @@
       "destination": "/api/gone"
     },
     {
+      "source": "/footer/",
+      "destination": "/api/gone"
+    },
+    {
       "source": "/post-navigation-area",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/post-navigation-area/",
       "destination": "/api/gone"
     },
     {
@@ -122,23 +162,35 @@
       "destination": "/api/gone"
     },
     {
+      "source": "/feed/",
+      "destination": "/api/gone"
+    },
+    {
       "source": "/comments/feed",
       "destination": "/api/gone"
     },
     {
-      "source": "/wp-admin/:path*",
+      "source": "/comments/feed/",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/services/feed",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/services/feed/",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/wp-content/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/wp-includes/(.*)",
       "destination": "/api/gone"
     },
     {
       "source": "/wp-login.php",
-      "destination": "/api/gone"
-    },
-    {
-      "source": "/wp-content/:path*",
-      "destination": "/api/gone"
-    },
-    {
-      "source": "/wp-includes/:path*",
       "destination": "/api/gone"
     }
   ]
