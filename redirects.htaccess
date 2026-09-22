@@ -1,0 +1,43 @@
+# Aegis Marketing — launch redirects
+# 5 page structure: / /about-us/ /products/ /applications/ /contact-us/
+#
+# RedirectMatch with ^...$ anchors throughout, NOT plain Redirect.
+# Plain `Redirect 301 /services/` prefix-matches, so /services/commercials/
+# would be rewritten to /products/commercials/ which does not exist.
+
+# --- Product pages -> anchored sections on /products/ -------------------
+RedirectMatch 301 ^/project/polycarbonate-roofing-sheets-malaysia/?$  https://aegismarketing.com.my/products/\#solid-polycarbonate
+RedirectMatch 301 ^/project/multi-wall-hollow-polycarbonate-sheet/?$  https://aegismarketing.com.my/products/\#hollow-polycarbonate
+RedirectMatch 301 ^/project/corrugated-polycarbonate-sheet/?$         https://aegismarketing.com.my/products/\#corrugated-polycarbonate
+RedirectMatch 301 ^/project/acrylic-sheets-pmma/?$                    https://aegismarketing.com.my/products/\#sid-acrylic
+RedirectMatch 301 ^/project/aluminium-composite-panel/?$              https://aegismarketing.com.my/products/\#aluminium-composite-panel
+RedirectMatch 301 ^/project/metal-roofing-sheet/?$                    https://aegismarketing.com.my/products/\#metal-roofing
+
+# --- Sector pages -> anchored sections on /applications/ ----------------
+RedirectMatch 301 ^/services/commercials/?$         https://aegismarketing.com.my/applications/\#commercial
+RedirectMatch 301 ^/services/epc-project/?$         https://aegismarketing.com.my/applications/\#epc
+RedirectMatch 301 ^/services/high-rise-building/?$  https://aegismarketing.com.my/applications/\#high-rise
+RedirectMatch 301 ^/services/industrial/?$          https://aegismarketing.com.my/applications/\#industrial
+RedirectMatch 301 ^/services/infrastructure/?$      https://aegismarketing.com.my/applications/\#infrastructure
+RedirectMatch 301 ^/services/shopping-mall/?$       https://aegismarketing.com.my/applications/\#shopping-mall
+
+# --- Parents ------------------------------------------------------------
+RedirectMatch 301 ^/services/?$     https://aegismarketing.com.my/applications/
+RedirectMatch 301 ^/project/?$      https://aegismarketing.com.my/products/
+RedirectMatch 301 ^/news-events/?$  https://aegismarketing.com.my/
+
+# --- The one genuine article (2016). Uncomment only if you build a blog. -
+# RedirectMatch 301 ^/2016/10/11/the-9-advantages-of-a-polycarbonate-greenhouse-over-a-glass-one/?$ https://aegismarketing.com.my/blog/polycarbonate-greenhouse-advantages/
+
+# --- All 303 spam posts. Every one is dated 2026; the real one is 2016. --
+RedirectMatch 410 ^/2026/
+
+# --- Theme demo pages that were never real content ----------------------
+RedirectMatch 410 ^/(sample-page|company-presentation|awwards-certifications-awards|investor-relations|annual-report|career|footer|post-navigation-area)/?$
+
+# --- Old WordPress attack surface and feeds -----------------------------
+RedirectMatch 410 ^/(xmlrpc\.php|wp-includes/wlwmanifest\.xml)$
+RedirectMatch 410 ^/(feed|comments/feed|services/feed)/?$
+RedirectMatch 410 ^/wp-(admin|login\.php|content|includes)(/.*)?$
+
+# --- /about-us/ and /contact-us/ keep their slugs, no rule needed. -------
