@@ -1,0 +1,11 @@
+# Kept in the repo for reference, never deployed: the template's own pages
+# (so nothing on the live site can lead to them) and the images only they use.
+/blog.html
+/blog
+/blog-categories
+/services.html
+/services
+/utility
+/assets/cdn.prod.website-files.com/6819dc01f0a7266bd0cbf158
+# editor settings
+/.vscode
