@@ -1,0 +1,392 @@
+/* ============ Aegis brand palette ============
+   Sampled from the Aegis logo banner / business card.
+   Retune the whole site by editing these five values. */
+:root {
+  --aegis-green: #A2C945;        /* brand lime — logo banner, headers */
+  --aegis-green-deep: #6E8F2A;   /* deeper green — gradient, hovers */
+  --aegis-green-soft: #EDF4DC;   /* pale tint — light backgrounds */
+  --aegis-ink: #101010;          /* near-black — text, dark sections */
+
+  /* remap the template's amber accent onto the brand green */
+  --primary: var(--aegis-green);
+  --_primary---primary-50:  #F5F9EA;
+  --_primary---primary-100: #E8F1CE;
+  --_primary---primary-200: #DCEBB3;
+  --_primary---primary-300: #CBE08D;
+  --_primary---primary-400: #B8D667;
+  --_primary---primary-500: #A2C945;
+  --_primary---primary-600: #8FB23C;
+  --_primary---primary-700: #6E8F2A;
+  --_primary---primary-800: #566D24;
+  --_primary---primary-900: #41521B;
+}
+/* buttons keep dark text so they stay legible on the lighter green */
+.primary_button:where(.w-variant-395f4269-11e6-b6b4-94bb-62b18120d117) .button_text,
+.secondary_button .button_text { color: var(--aegis-ink) !important; }
+.secondary_button:hover { background-color: var(--aegis-green-deep) !important; }
+
+/* Aegis header + products enhancements */
+.navbar { transition: background-color .25s ease, box-shadow .25s ease; }
+.navbar .site_logo_wrapper { background: linear-gradient(90deg, var(--aegis-green-deep) 0%, var(--aegis-green) 100%);
+  padding:8px 14px; border-radius:10px; transition: background .25s ease; }
+.navbar.aegis-scrolled .site_logo_wrapper { background: transparent; }  /* header is already green */
+.navbar .site_logo { width: 104px !important; height: auto !important; }
+.navbar.aegis-scrolled { background-color:#A2C945 !important;
+  background-image: linear-gradient(90deg, var(--aegis-green-deep) 0%, var(--aegis-green) 55%, #B5D64F 100%) !important;
+  box-shadow:0 2px 14px rgba(0,0,0,.14); }
+.navbar.aegis-scrolled .nav_link { color:#fff !important; }
+.navbar.aegis-scrolled .w-nav-button, .navbar.aegis-scrolled .menu_icon { color:#fff !important; }
+
+/* number stat: big number, small label */
+.aegis_stat { display:flex; align-items:baseline; gap:14px; margin:0 0 10px; }
+.aegis_stat_num { font-size:40px; font-weight:700; line-height:1; color:var(--aegis-green); letter-spacing:-.01em; }
+.aegis_stat_label { font-size:12px; font-weight:400; letter-spacing:.14em; text-transform:uppercase; color:#9aa19a; }
+
+/* open-state layout for product rows */
+.home_service_section .w-dropdown-list.w--open,
+.home_service_section .w-dropdown-list.w--open .service_dropdown_image_wrapper,
+.home_service_section .w-dropdown-list.w--open .service_dropdown_image,
+.home_service_section .w-dropdown-list.w--open .faq-answer-text-wrapper,
+.home_service_section .w-dropdown-list.w--open .faq-answer-text,
+.home_service_section .w-dropdown-list.w--open .aegis_stat { opacity:1 !important; transform:none !important; }
+.home_service_section .w-dropdown-list.w--open {
+  position: static !important; background: transparent !important;
+  height: auto !important; min-height: 0 !important;
+  display: flex !important; gap: 36px; align-items: flex-start;
+  padding: 10px 0 30px; }
+.home_service_section .w-dropdown-list.w--open .service_dropdown_image_wrapper {
+  position: static !important; width: 300px; height: auto !important;
+  max-width: 100%; flex-shrink: 0; margin: 0; inset: auto !important; }
+.home_service_section .w-dropdown-list.w--open .service_dropdown_image_wrapper img {
+  width: 100% !important; height: auto !important; aspect-ratio: 3 / 2;
+  object-fit: cover; border-radius: 10px; display: block; }
+.home_service_section .w-dropdown-list.w--open .faq-answer-text-wrapper { flex: 1; min-width: 0; }
+.home_service_section .w-dropdown-list.w--open .faq-answer-text { color: #c9d2c0 !important; font-weight: 400 !important; }
+.home_service_section .w-dropdown-list.w--open .aegis_stat { margin-left: 66px; }
+.home_service_section .w-dropdown-list.w--open .service_button_wrapper { padding-left: 66px; margin-top: 14px; }
+
+/* spec table: soft card, icons, air */
+.aegis_glance { margin-top: 90px; }
+.aegis_glance_label { font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#8f968f; margin-bottom:10px; }
+.aegis_glance_heading { font-size:30px; font-weight:700; color:#fff; margin-bottom:30px; }
+.aegis_swipe_hint { display:none; font-size:12px; color:#8f968f; margin:-16px 0 14px; }
+.aegis_table_wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.aegis_table { width:100%; min-width:1020px; border-collapse:collapse; }
+.aegis_table th { text-align:left; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:#98a098; padding:16px 20px; border-bottom:1px solid rgba(255,255,255,.18); }
+.aegis_table td { padding:20px; font-size:15px; font-weight:400; line-height:1.55; color:#cfd4cb;
+  border-bottom:1px solid rgba(255,255,255,.07); }
+.aegis_table td.aegis_td_product { color:#fff; font-weight:600; white-space:nowrap;
+  display:flex; align-items:center; gap:12px; border-bottom:none; }
+.aegis_table tbody tr { border-bottom:1px solid rgba(255,255,255,.07); }
+.aegis_table tbody tr:last-child, .aegis_table tbody tr:last-child td { border-bottom:none; }
+.aegis_row_thumb { width:48px; height:34px; object-fit:cover; border-radius:6px; flex-shrink:0; display:block; }
+.aegis_table_note { margin-top:22px; font-size:13px; font-weight:400; color:#98a098; }
+.aegis_table_note a { color:#A2C945; text-decoration:underline; }
+
+/* why-choose: rows stay fully visible (IX binds these by class, so override hard) */
+.features_section .features_wrapper,
+.features_section .features_wrapper > *,
+.features_section .heading_block,
+.features_section .feature_image_wrapper,
+.features_section .feature_image { opacity: 1 !important; transform: none !important;
+  will-change: auto !important; }
+
+/* footer mark: just the logo, modest size (the logo already reads "AEGIS") */
+.aegis_footer_mark { display: flex !important; align-items: center;
+  margin-left: 0 !important; font-size: 0 !important; line-height: 1 !important; }
+.aegis_footer_logo { width: 118px; height: auto; opacity: .75; }
+.footer_block._1st .aegis_footer_mark { margin-top: 14px; }
+@media (max-width: 767px) { .aegis_footer_logo { width: 96px; }
+  .footer_block._1st .aegis_footer_mark { margin-top: 6px; } }
+
+/* the "Let's talk" marquee reads calmer at a smaller size on desktop */
+@media (min-width: 992px) { .infinity_slider_ttile { font-size: 52px !important; } }
+@media (min-width: 1280px) { .infinity_slider_ttile { font-size: 58px !important; } }
+@media (min-width: 1440px) { .infinity_slider_ttile { font-size: 64px !important; } }
+
+/* footer contact icons: keep them perfectly round at any text length */
+.footer_contact_info_svg_wrapper { flex: 0 0 38px !important;
+  width: 38px !important; height: 38px !important;
+  min-width: 38px !important; min-height: 38px !important;
+  aspect-ratio: 1 / 1; align-self: flex-start; }
+.footer_contact_info_svg { width: 17px !important; height: 17px !important; flex-shrink: 0; }
+.footer_contact_info_wrapper { align-items: flex-start; grid-column-gap: 16px; }
+@media (max-width: 767px) {
+  .footer_contact_info_svg_wrapper { flex: 0 0 34px !important;
+    width: 34px !important; height: 34px !important;
+    min-width: 34px !important; min-height: 34px !important; }
+  .footer_contact_info_svg { width: 15px !important; height: 15px !important; }
+  .footer_contact_info_wrapper { grid-column-gap: 14px; }
+}
+
+/* brand accents: section labels, ticks, dividers */
+.features_section .features_svg { color: var(--aegis-green); }
+.aegis_glance_label { color: var(--aegis-green) !important; }
+.aegis_row_thumb { outline: 1px solid rgba(162,201,69,.35); outline-offset: -1px; }
+.contact_form_section .input_field:focus { border-color: var(--aegis-green) !important; }
+
+/* why-choose: tighter rows so the list reads compactly */
+.features_section .section_gap.features { padding-top: 70px; padding-bottom: 70px; }
+.features_section .heading_block.middle { margin-bottom: 10px; }
+.features_section .features_block { grid-row-gap: 0; }
+.features_wrapper { padding-top: 18px !important; padding-bottom: 18px !important;
+  grid-column-gap: 30px; }
+.features_heading_wrapper { margin-top: 0 !important; grid-column-gap: 18px; }
+.features_section .body_text_big.features { font-size: 15px; line-height: 1.5; }
+
+/* why-choose: show each feature image statically in the row (was a hover reveal) */
+.features_wrapper { align-items: center; }
+.feature_image_wrapper { position: static !important; inset: auto !important;
+  display: flex !important; opacity: 1 !important; width: 110px; flex: 0 0 110px;
+  justify-content: flex-end; }
+.feature_image { width: 110px !important; max-width: 110px; height: 74px;
+  object-fit: cover; border-radius: 8px; opacity: 1 !important; transform: none !important; }
+@media (max-width: 991px) {
+  .feature_image_wrapper { width: 92px; flex: 0 0 92px; }
+  .feature_image { width: 92px !important; height: 62px; }
+}
+@media (max-width: 767px) {
+  .features_wrapper { align-items: flex-start; padding-top: 14px !important; padding-bottom: 14px !important; }
+  .feature_image_wrapper { width: 84px; flex: 0 0 84px; }
+  .feature_image { width: 84px !important; height: 56px; }
+  .features_section .body_text_big.features { font-size: 14px; }
+}
+
+/* the white curtain overlay was animated away by IX; with reduced animations, hide it */
+.hero_video_overlay { display: none !important; }
+
+/* keep the hero background video in its own stacking context (its z-index is -100) */
+.hero_section .hero_video { position: relative; isolation: isolate; }
+
+/* calmer scroll: sections flow normally instead of pinning */
+.counter_section { position: static !important; height: auto !important; }
+.content_wrapper.roof_material { position: static !important; top: auto !important; }
+
+@media (max-width: 767px) {
+  .home_service_section .w-dropdown-list.w--open { flex-direction: column; gap: 18px; }
+  .home_service_section .w-dropdown-list.w--open .service_dropdown_image_wrapper { width: 100%; }
+  .home_service_section .w-dropdown-list.w--open .aegis_stat { margin-left: 0; }
+  .home_service_section .w-dropdown-list.w--open .service_button_wrapper { padding-left: 0; }
+  .aegis_stat_num { font-size:30px; }
+  .aegis_stat_label { letter-spacing:.1em; }
+  .aegis_glance { margin-top: 60px; }
+  .aegis_glance_heading { font-size:22px; margin-bottom:20px; }
+  .aegis_swipe_hint { display:block; margin:-8px 0 12px; }
+  .aegis_table { min-width: 900px; }
+  .aegis_table th { font-size:11px; padding:12px 14px; font-weight:500; }
+  .aegis_table td { font-size:13px; font-weight:400 !important; padding:14px; line-height:1.5; }
+  .aegis_table td.aegis_td_product { font-weight:600 !important; }
+  .aegis_row_thumb { width:40px; height:28px; }
+  .aegis_table_note { font-size:12px; }
+}
+.infinity_slider_wrapper{overflow:hidden}
+
+/* products: photos fill their frames without stretching, anchors clear the fixed navbar */
+.services_block .service_image,
+.service_details_image_wrapper .service_details_image,
+.service_details_content_image_wrapper .service_details_content_image { object-fit: cover; }
+.service_details_image_wrapper .service_details_image,
+.service_details_content_image_wrapper .service_details_content_image { width: 100%; height: auto; }
+.service_list .w-dyn-item[id] { scroll-margin-top: 120px; }
+.services_block .service_image_wrapper { flex-shrink: 0; }   /* photo keeps the template's column width */
+.service_details_rich_text a, .service_details_rich_text_2 a, .points_block a {
+  color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+/* floating WhatsApp button: WhatsApp green, dark label like the other green buttons.
+   Products pages show it at every size; Home, About and Contact only on phones (aegis_wa_mobile). */
+.aegis_wa_float { position: fixed; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 1500;
+  display: inline-flex; align-items: center; gap: 10px; height: 54px; padding: 0 22px 0 16px; border-radius: 999px;
+  background: #25D366; color: var(--aegis-ink); font-family: inherit; font-size: 16px; font-weight: 600; line-height: 1;
+  text-decoration: none; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); transition: background-color .2s ease; }
+.aegis_wa_float:hover { background: #1EBE5B; color: var(--aegis-ink); text-decoration: none; }
+.aegis_wa_float:focus-visible { outline: 3px solid var(--aegis-ink); outline-offset: 3px; }
+.aegis_wa_icon { width: 26px; height: 26px; flex: none; fill: #fff; }
+@media (max-width: 767px) {
+  .aegis_wa_float { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 56px; height: 56px;
+    padding: 0; justify-content: center; }
+  .aegis_wa_label { display: none; }
+  .aegis_wa_icon { width: 30px; height: 30px; }
+}
+@media (max-width: 767px) { .aegis_has_wa .footer_copyright_text_wrapper { padding-bottom: 72px; } }  /* copyright clears the button */
+.aegis_wa_float.aegis_wa_mobile { display: none; }
+@media (max-width: 767px) { .aegis_wa_float.aegis_wa_mobile { display: inline-flex; } }
+@media print { .aegis_wa_float { display: none; } }
+
+/* never show Webflow's "Made in Webflow" badge, even if a page still carries a webflow.io domain */
+.w-webflow-badge { display: none !important; }
+
+/* aegis-look start: homepage product hotspots (IKEA style), built by .build/build_home_look.py */
+.full_height_image_section.aegis_look { position: relative; flex-direction: column; align-items: stretch; }
+.aegis_look .full_height_image { position: relative; width: 100%; overflow: hidden; background: #dfe3da none;
+  transform: none !important; }   /* no scroll parallax: dots must stay on their product */
+@media (min-width: 992px) {   /* shorter than the template's full screen; the intro (when above it) adds to it */
+  .full_height_image_section.aegis_look { height: auto; max-height: none; }
+  .aegis_look .full_height_image { flex: none; height: clamp(440px, 70vh, 700px); min-height: 0; max-height: none; } }
+.aegis_look_scene { position: absolute; inset: 0; margin: 0; }
+.aegis_look_img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; display: block;
+  object-fit: cover; object-position: 50% 50%; }
+
+/* dots: a soft glass ring with a white centre; hovered or open, the ring turns solid and the centre dark */
+.aegis_look_spot { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2; display: none; }
+.aegis_look.is-ready .aegis_look_spot { display: block; }
+.aegis_look.is-ready .aegis_look_spot[hidden] { display: none; }
+.aegis_look_spot.is-open { z-index: 3; }   /* open card sits above the other dots */
+.aegis_look_dot { position: absolute; left: -16px; top: -16px; width: 32px; height: 32px; padding: 0; border: 0;
+  border-radius: 50%; background: rgba(255, 255, 255, .5); cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .4), 0 2px 10px rgba(0, 0, 0, .3);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  transition: transform .2s ease, background-color .2s ease; }
+.aegis_look_dot::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px;
+  margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+  transition: background-color .2s ease, transform .2s ease; }
+.aegis_look_dot:hover, .aegis_look_spot.is-open .aegis_look_dot { transform: scale(1.12); background: rgba(255, 255, 255, .92); }
+.aegis_look_dot:hover::after, .aegis_look_spot.is-open .aegis_look_dot::after { background: var(--aegis-ink); transform: scale(.86); }
+.aegis_look_dot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+/* the first time the photo scrolls into view, a soft ring ripples out of each dot twice, then stops */
+.aegis_look_dot::before { content: ""; position: absolute; inset: -2px; border: 2px solid rgba(255, 255, 255, .95);
+  border-radius: 50%; opacity: 0; pointer-events: none; }
+.aegis_look.is-hinting .aegis_look_dot::before { animation: aegis-look-ping 1.4s cubic-bezier(.2, .6, .35, 1) 2; }
+.aegis_look.is-hinting .aegis_look_spot:nth-of-type(2) .aegis_look_dot::before { animation-delay: .18s; }
+.aegis_look.is-hinting .aegis_look_spot:nth-of-type(3) .aegis_look_dot::before { animation-delay: .36s; }
+@keyframes aegis-look-ping { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(2.3); } }
+
+/* product card: assets/aegis-look.js puts it beside the dot (or under / over it on narrow photos),
+   sets data-side and --caret (where the pointer sits along the edge facing the dot) */
+.aegis_look_card { position: absolute; left: 30px; top: -50px; z-index: 3; box-sizing: border-box; display: flex;
+  align-items: center; gap: 14px; width: max-content; max-width: 360px; padding: 10px 20px 10px 10px;
+  border-radius: 14px; background: #fff; color: var(--aegis-ink); font-weight: 400; text-align: left;
+  text-decoration: none; box-shadow: 0 0 0 1px rgba(16, 16, 16, .06), 0 2px 6px rgba(16, 16, 16, .08),
+  0 18px 40px -12px rgba(16, 16, 16, .4); opacity: 0; visibility: hidden; pointer-events: none;
+  transform: scale(.94); transform-origin: 0 50%;
+  transition: opacity .14s ease, transform .14s ease, box-shadow .2s ease, visibility 0s linear .14s; }
+.aegis_look_spot.is-open .aegis_look_card { opacity: 1; visibility: visible; pointer-events: auto; transform: none;
+  transition: opacity .18s ease, transform .24s cubic-bezier(.2, .8, .2, 1), box-shadow .2s ease, visibility 0s; }
+.aegis_look_card:hover, .aegis_look_card:focus { color: var(--aegis-ink); text-decoration: none; }
+.aegis_look_card:hover { box-shadow: 0 0 0 1px rgba(16, 16, 16, .08), 0 3px 8px rgba(16, 16, 16, .1),
+  0 22px 46px -12px rgba(16, 16, 16, .46); }
+.aegis_look_card:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 3px; }
+.aegis_look_card::after { content: ""; position: absolute; left: -6px; top: calc(var(--caret, 50%) - 7px);
+  width: 14px; height: 14px; border-radius: 3px; background: #fff; transform: rotate(45deg); }   /* pointer */
+.aegis_look_card[data-side="left"]::after { left: auto; right: -6px; }
+.aegis_look_card[data-side="below"]::after { left: calc(var(--caret, 50%) - 7px); top: -6px; }
+.aegis_look_card[data-side="above"]::after { left: calc(var(--caret, 50%) - 7px); top: auto; bottom: -6px; }
+.aegis_look_card::before { content: ""; position: absolute; left: -12px; top: 0; width: 12px; height: 100%; }   /* hover bridge to the dot */
+.aegis_look_card[data-side="left"]::before { left: auto; right: -12px; }
+.aegis_look_card[data-side="below"]::before, .aegis_look_card[data-side="above"]::before { left: 0; width: 100%; height: 12px; top: -12px; }
+.aegis_look_card[data-side="above"]::before { top: auto; bottom: -12px; }
+.aegis_look_card_media { flex: none; width: 80px; height: 80px; overflow: hidden; border-radius: 10px; background: #eef1e8; }
+.aegis_look_card_media img { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover;
+  transition: transform .4s ease; }
+.aegis_look_card:hover .aegis_look_card_media img { transform: scale(1.07); }
+.aegis_look_card_text { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.aegis_look_card_kicker { margin-bottom: 5px; font-size: 11px; font-weight: 700; line-height: 1.2; letter-spacing: .09em;
+  text-transform: uppercase; color: #56731C; }
+.aegis_look_card_name { font-size: 17px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em; }
+.aegis_look_card_line { margin-top: 3px; font-size: 13.5px; font-weight: 400; line-height: 1.35; color: #5f5f5f; }
+.aegis_look_card_cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 9px; font-size: 13px;
+  font-weight: 600; line-height: 1; }
+.aegis_look_card_cta svg { flex: none; box-sizing: border-box; width: 22px; height: 22px; padding: 4px; border-radius: 50%;
+  background: var(--aegis-green); color: var(--aegis-ink);
+  transition: transform .2s ease, background-color .2s ease, color .2s ease; }
+.aegis_look_card:hover .aegis_look_card_cta svg, .aegis_look_card:focus-visible .aegis_look_card_cta svg {
+  transform: translateX(3px); background: var(--aegis-green-deep); color: #fff; }
+.aegis_look_nav { position: absolute; left: 24px; bottom: 24px; z-index: 4; display: none; align-items: center; gap: 8px;
+  padding: 6px; border-radius: 999px; background: rgba(255, 255, 255, .94); box-shadow: 0 4px 16px rgba(0, 0, 0, .18); }
+.aegis_look.is-ready .aegis_look_nav { display: flex; }
+.aegis_look_prev, .aegis_look_next { width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--aegis-ink); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.aegis_look_prev:hover, .aegis_look_next:hover { background: #333; }
+.aegis_look_prev:focus-visible, .aegis_look_next:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
+.aegis_look_count { min-width: 46px; text-align: center; font-size: 14px; font-weight: 600; color: var(--aegis-ink); }
+/* intro: above the photo on phones, tablets and small laptops; a glass panel on the sky (left of the roof)
+   where the screen is wide enough to leave room for it */
+.aegis_look_intro { box-sizing: border-box; padding: 10px 20px 22px; color: var(--aegis-ink); text-align: center; }
+.aegis_look_intro_kicker { margin: 0 0 6px; font-size: 12px; font-weight: 700; line-height: 1.2; letter-spacing: .1em;
+  text-transform: uppercase; color: #56731C; }
+.aegis_look_intro_title { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em;
+  text-transform: none; color: var(--aegis-ink); }
+.aegis_look_intro_hint { display: none; align-items: center; justify-content: center; gap: 8px; margin: 8px 0 0; font-size: 14px; font-weight: 500;
+  line-height: 1.4; color: #404040; }
+.aegis_look.is-ready .aegis_look_intro_hint { display: flex; }
+.aegis_look_hint_icon { flex: none; position: relative; width: 18px; height: 18px; border-radius: 50%; background: #d5dbcc; }
+.aegis_look_hint_icon::after { content: ""; position: absolute; left: 5px; top: 5px; width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+.aegis_look_hint_tap { display: none; }
+.aegis_look:not(.aegis_look_can_hover) .aegis_look_hint_hover { display: none; }
+.aegis_look:not(.aegis_look_can_hover) .aegis_look_hint_tap { display: inline; }
+.aegis_look_chips { display: none; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.aegis_look.is-ready .aegis_look_chips { display: flex; }
+.aegis_look_chip { display: inline-flex; align-items: center; gap: 7px; margin: 0; padding: 8px 13px 8px 10px;
+  border: 1px solid rgba(16, 16, 16, .14); border-radius: 999px; background: #fff; color: var(--aegis-ink);
+  font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1.1; cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+.aegis_look_chip_dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--aegis-ink);
+  box-shadow: 0 0 0 3px rgba(16, 16, 16, .12); transition: background-color .15s ease, box-shadow .15s ease; }
+.aegis_look_chip:hover, .aegis_look_chip.is-active { border-color: var(--aegis-ink); background: var(--aegis-ink); color: #fff; }
+.aegis_look_chip:hover .aegis_look_chip_dot, .aegis_look_chip.is-active .aegis_look_chip_dot {
+  background: var(--aegis-green); box-shadow: 0 0 0 3px rgba(255, 255, 255, .22); }
+.aegis_look_chip:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
+@media (min-width: 768px) {
+  .aegis_look_intro { padding: 4px 40px 26px; }
+  .aegis_look_intro_title { font-size: 26px; } }
+@media (min-width: 992px) {
+  .aegis_look_intro { text-align: left; }
+  .aegis_look_intro_hint, .aegis_look_chips { justify-content: flex-start; } }
+@media (min-width: 992px) and (max-width: 1359px) {   /* one row: title left, hint and chips right */
+  .aegis_look_intro { display: grid; grid-template-columns: 1fr auto; column-gap: 40px; align-items: end;
+    padding: 0 calc(8.5% + 20px) 28px; }
+  .aegis_look_intro_kicker { grid-area: 1 / 1; }
+  .aegis_look_intro_title { grid-area: 2 / 1; }
+  .aegis_look_intro_hint { grid-area: 1 / 2; justify-content: flex-end; margin: 0 0 10px; }
+  .aegis_look_chips { grid-area: 2 / 2; justify-content: flex-end; margin: 0; } }
+@media (min-width: 1360px) {
+  .aegis_look_intro { position: absolute; left: 24px; top: 24px; z-index: 2; max-width: 360px; padding: 16px 18px 18px;
+    border-radius: 16px; background: rgba(255, 255, 255, .84); -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .5), 0 14px 34px -14px rgba(16, 16, 16, .4); }
+  .aegis_look_intro_title { font-size: 22px; }
+  .aegis_look_chips { gap: 6px; }
+  .aegis_look_chip { padding: 7px 11px 7px 9px; } }
+@media (min-width: 1600px) {
+  .aegis_look_intro { left: 40px; top: 36px; max-width: 380px; padding: 18px 20px 20px; }
+  .aegis_look_intro_title { font-size: 24px; } }
+.aegis_sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0; }
+@media (max-width: 767px) {
+  .aegis_look_nav { left: 12px; bottom: 12px; padding: 4px; gap: 4px; }
+  .aegis_look_prev, .aegis_look_next { width: 34px; height: 34px; }
+  .aegis_look_dot { left: -14px; top: -14px; width: 28px; height: 28px; }
+  .aegis_look_dot::after { width: 12px; height: 12px; margin: -6px 0 0 -6px; }
+}
+/* narrow photos (phones): a slimmer card, centred under or over its dot */
+.aegis_look_narrow .aegis_look_card { width: min(340px, calc(100vw - 24px)); max-width: none; gap: 12px;
+  padding: 8px 14px 8px 8px; border-radius: 12px; }
+.aegis_look_narrow .aegis_look_card_media { width: 58px; height: 58px; border-radius: 8px; }
+.aegis_look_narrow .aegis_look_card_kicker { display: none; }
+.aegis_look_narrow .aegis_look_card_name { font-size: 15px; }
+.aegis_look_narrow .aegis_look_card_line { margin-top: 2px; font-size: 12.5px; }
+.aegis_look_narrow .aegis_look_card_cta { margin-top: 6px; font-size: 12px; }
+.aegis_look_narrow .aegis_look_card_cta svg { width: 18px; height: 18px; padding: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .aegis_look_dot, .aegis_look_dot::after, .aegis_look_card, .aegis_look_spot.is-open .aegis_look_card,
+  .aegis_look_card_media img, .aegis_look_card_cta svg, .aegis_look_chip, .aegis_look_chip_dot { transition: none; }
+  .aegis_look.is-hinting .aegis_look_dot::before { animation: none; }
+  .aegis_look_card, .aegis_look_card:hover .aegis_look_card_media img,
+  .aegis_look_card:hover .aegis_look_card_cta svg { transform: none; }
+}
+/* aegis-look end */
+
+/* aegis-home-products start: homepage product list buttons, built by .build/build_home_products.py */
+.home_service_section .service_button_wrapper.aegis_service_buttons { flex-wrap: wrap; gap: 12px; }
+.home_service_section .primary_button.aegis_btn_outline { background-color: transparent !important;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .5); transition: background-color .3s, box-shadow .3s; }
+.home_service_section .primary_button.aegis_btn_outline .button_text { color: #fff !important; }
+.home_service_section .primary_button.aegis_btn_outline:hover { background-color: var(--aegis-green) !important; box-shadow: none; }
+.home_service_section .primary_button.aegis_btn_outline:hover .button_text { color: var(--aegis-ink) !important; }
+.home_service_section .primary_button:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 3px; }
+.home_service_section .aegis_btn_outline .aegis_wa_icon { width: 18px; height: 18px; fill: currentColor; }
+.aegis_service_img_link { display: contents; }
+.aegis_service_img_link img { cursor: pointer; }
+.aegis_all_products { display: flex; justify-content: center; }
+/* aegis-home-products end */
