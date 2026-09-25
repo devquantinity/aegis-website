@@ -188,7 +188,7 @@
 .service_details_content_image_wrapper .service_details_content_image { object-fit: cover; }
 .service_details_image_wrapper .service_details_image,
 .service_details_content_image_wrapper .service_details_content_image { width: 100%; height: auto; }
-.service_list .w-dyn-item[id] { scroll-margin-top: 120px; }
+.service_list .w-dyn-item[id], #applications { scroll-margin-top: 120px; }
 .services_block .service_image_wrapper { flex-shrink: 0; }   /* photo keeps the template's column width */
 .service_details_rich_text a, .service_details_rich_text_2 a, .points_block a {
   color: inherit; text-decoration: underline; text-underline-offset: 3px; }

@@ -4,37 +4,37 @@
   "redirects": [
     {
       "source": "/services/commercials",
-      "destination": "/applications#commercial",
+      "destination": "/#applications",
       "permanent": true
     },
     {
       "source": "/services/epc-project",
-      "destination": "/applications#epc",
+      "destination": "/#applications",
       "permanent": true
     },
     {
       "source": "/services/high-rise-building",
-      "destination": "/applications#high-rise",
+      "destination": "/#applications",
       "permanent": true
     },
     {
       "source": "/services/industrial",
-      "destination": "/applications#industrial",
+      "destination": "/#applications",
       "permanent": true
     },
     {
       "source": "/services/infrastructure",
-      "destination": "/applications#infrastructure",
+      "destination": "/#applications",
       "permanent": true
     },
     {
       "source": "/services/shopping-mall",
-      "destination": "/applications#shopping-mall",
+      "destination": "/#applications",
       "permanent": true
     },
     {
       "source": "/services",
-      "destination": "/applications",
+      "destination": "/#applications",
       "permanent": true
     },
     {
