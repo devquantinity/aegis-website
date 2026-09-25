@@ -390,3 +390,46 @@
 .aegis_service_img_link img { cursor: pointer; }
 .aegis_all_products { display: flex; justify-content: center; }
 /* aegis-home-products end */
+
+/* aegis-chrome start: header, phone menu and footer on every page, built by .build/build_chrome.py */
+@media (max-width: 991px) {
+  /* header pinned to the top on phones and tablets too, slimmer once the page is scrolled */
+  .navbar, .navbar:where(.w-variant-ad61860b-2641-c3e2-a782-34644e472e90) { position: sticky !important; top: 0;
+    background-color: #fff; }
+  .navbar .navbar_wrapper { transition: padding .25s ease; }
+  .navbar.aegis-scrolled .navbar_wrapper { padding-top: 10px; padding-bottom: 10px; }
+  /* the menu behind the hamburger: left aligned, scrolls if it is taller than the screen */
+  .navbar .nav_menu_wrapper[data-nav-menu-open] { max-height: calc(100vh - 64px); max-height: calc(100dvh - 64px);
+    overflow-y: auto; padding-left: 24px; padding-right: 24px; }
+  .navbar .w-nav-overlay { background-color: #101010; }   /* the page under the open menu stays covered */
+  .navbar .nav_menu { text-align: left; align-items: stretch; }
+  .navbar .nav_wrapper { align-self: stretch; }
+  .navbar .nav_button_wrapper { justify-content: flex-start; }
+  /* the six products under Products, two per row */
+  .aegis_nav_sub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+  .aegis_nav_sub_link { display: flex; align-items: center; min-height: 48px; padding: 10px 12px; box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, .16); border-radius: 10px; color: #d9e0d1; font-size: 14px; font-weight: 500;
+    line-height: 1.3; text-align: left; text-decoration: none; text-transform: none; transition: border-color .2s, color .2s; }
+  .aegis_nav_sub_link:hover, .aegis_nav_sub_link.is-current { border-color: var(--aegis-green); color: #fff; text-decoration: none; }
+  .aegis_nav_sub_link:focus-visible { outline: 2px solid var(--aegis-green); outline-offset: 2px; }
+  /* hamburger turns into a cross while the menu is open (the homepage had no animation for it) */
+  .menu_button .top_line, .menu_button .middle_line, .menu_button .bottom_line { transition: transform .3s ease, width .3s ease; }
+  .menu_button.w--open .top_line { transform: translateY(7px) rotate(45deg); }
+  .menu_button.w--open .middle_line { width: 0; }
+  .menu_button.w--open .bottom_line { transform: translateY(-7px) rotate(-45deg); }
+}
+@media (max-width: 991px) and (prefers-reduced-motion: reduce) {
+  .navbar .navbar_wrapper, .menu_button .top_line, .menu_button .middle_line, .menu_button .bottom_line { transition: none; }
+}
+@media (min-width: 992px) { .aegis_nav_sub { display: none; } }
+/* footer: tap the address for Google Maps, the number to call, the email to write */
+.footer_contact_info_wrapper.aegis_footer_contact { color: inherit; text-decoration: none; }
+.aegis_footer_contact:hover .body_text_medium, .aegis_footer_contact:focus-visible .body_text_medium {
+  text-decoration: underline; text-underline-offset: 3px; }
+.cta_phone_text .aegis_tel { color: inherit; text-decoration: none; }
+.cta_phone_text .aegis_tel:hover { text-decoration: underline; text-underline-offset: 6px; }
+.footer_copyright_text .aegis_credit { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.footer_copyright_text .aegis_credit:hover { color: var(--aegis-green); }
+/* enquiry forms: a field only spam bots fill in */
+.aegis_hp { position: absolute !important; left: -10000px !important; width: 1px; height: 1px; opacity: 0; }
+/* aegis-chrome end */
