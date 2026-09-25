@@ -1,5 +1,6 @@
 /* Aegis: behaviour shared by every page (added by .build/build_chrome.py). No dependencies.
    1. Header: turns solid green once the page is scrolled (it stays pinned to the top on every screen).
+      The Products menu on laptops closes with Escape and opens with a first tap on touch screens.
    2. Enquiry forms (form.contact_form on the homepage and the Contact page): sent to /api/contact, which
       emails enquiry@ with a copy to the owner. If sending fails, the visitor gets a WhatsApp link with
       their details already filled in, so no enquiry is lost. */
@@ -14,6 +15,34 @@
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+  }
+
+  // Products menu on laptops (the panel itself opens with CSS on hover and keyboard focus):
+  // Escape closes it, and on touch screens the first tap on Products opens it instead of leaving the page
+  var sub = document.querySelector('.aegis_has_sub');
+  var mq = function (q) { return window.matchMedia ? window.matchMedia(q).matches : false; };
+  if (sub) {
+    var top = sub.querySelector('.nav_link');
+    var shut = function () { sub.classList.remove('is-open'); };
+    sub.addEventListener('keydown', function (e) {
+      if ((e.key === 'Escape' || e.key === 'Esc') && mq('(min-width: 992px)')) {
+        shut();
+        sub.classList.add('is-closed');
+        if (top && document.activeElement !== top) top.focus();
+      }
+    });
+    sub.addEventListener('mouseleave', function () { sub.classList.remove('is-closed'); });
+    sub.addEventListener('focusout', function (e) {
+      if (!e.relatedTarget || !sub.contains(e.relatedTarget)) { sub.classList.remove('is-closed'); shut(); }
+    });
+    if (top) top.addEventListener('click', function (e) {
+      if (mq('(min-width: 992px)') && mq('(hover: none)') && !sub.classList.contains('is-open')) {
+        e.preventDefault();
+        sub.classList.remove('is-closed');
+        sub.classList.add('is-open');
+      }
+    });
+    document.addEventListener('click', function (e) { if (!sub.contains(e.target)) shut(); });
   }
 
   var opened = Date.now();

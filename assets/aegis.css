@@ -405,13 +405,16 @@
   .navbar .nav_menu { text-align: left; align-items: stretch; }
   .navbar .nav_wrapper { align-self: stretch; }
   .navbar .nav_button_wrapper { justify-content: flex-start; }
-  /* the six products under Products, two per row */
-  .aegis_nav_sub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
-  .aegis_nav_sub_link { display: flex; align-items: center; min-height: 48px; padding: 10px 12px; box-sizing: border-box;
+  /* the six products under Products, two per row (the photos and "View all" are for the laptop panel) */
+  .aegis_nav_sub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; padding: 0;
+    list-style: none; }
+  .aegis_nav_sub > li { display: flex; margin: 0; padding: 0; }
+  .aegis_nav_sub_link { flex: 1; display: flex; align-items: center; min-height: 48px; padding: 10px 12px; box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, .16); border-radius: 10px; color: #d9e0d1; font-size: 14px; font-weight: 500;
     line-height: 1.3; text-align: left; text-decoration: none; text-transform: none; transition: border-color .2s, color .2s; }
   .aegis_nav_sub_link:hover, .aegis_nav_sub_link.is-current { border-color: var(--aegis-green); color: #fff; text-decoration: none; }
   .aegis_nav_sub_link:focus-visible { outline: 2px solid var(--aegis-green); outline-offset: 2px; }
+  .aegis_nav_sub_img, .aegis_nav_sub .aegis_nav_sub_all { display: none; }
   /* hamburger turns into a cross while the menu is open (the homepage had no animation for it) */
   .menu_button .top_line, .menu_button .middle_line, .menu_button .bottom_line { transition: transform .3s ease, width .3s ease; }
   .menu_button.w--open .top_line { transform: translateY(7px) rotate(45deg); }
@@ -421,7 +424,46 @@
 @media (max-width: 991px) and (prefers-reduced-motion: reduce) {
   .navbar .navbar_wrapper, .menu_button .top_line, .menu_button .middle_line, .menu_button .bottom_line { transition: none; }
 }
-@media (min-width: 992px) { .aegis_nav_sub { display: none; } }
+@media (min-width: 992px) {
+  /* laptops: Products opens a panel with the six products (pointing at it, tabbing to it, or a first tap on touch screens) */
+  .aegis_has_sub > .nav_link_wrapper > .nav_link { white-space: nowrap; }
+  .aegis_has_sub > .nav_link_wrapper > .nav_link::after { content: ""; display: inline-block; width: 6px; height: 6px;
+    margin-left: 8px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: translateY(-3px) rotate(45deg);
+    transition: transform .2s ease; }
+  .aegis_has_sub:hover > .nav_link_wrapper > .nav_link::after,
+  .aegis_has_sub:focus-within > .nav_link_wrapper > .nav_link::after,
+  .aegis_has_sub.is-open > .nav_link_wrapper > .nav_link::after { transform: translateY(0) rotate(225deg); }
+  .aegis_has_sub:not(.is-closed):hover > .nav_link_wrapper > .nav_border,
+  .aegis_has_sub:not(.is-closed):focus-within > .nav_link_wrapper > .nav_border,
+  .aegis_has_sub.is-open > .nav_link_wrapper > .nav_border { width: 100% !important; }   /* underline stays while it is open */
+  .aegis_nav_sub { position: absolute; top: calc(100% + 18px); left: 50%; z-index: 5; box-sizing: border-box; width: 580px;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin: 0 0 0 -290px; padding: 12px;
+    list-style: none; background-color: #101010; border-radius: 16px; box-shadow: 0 20px 44px rgba(0, 0, 0, .28);
+    visibility: hidden; opacity: 0; transition: opacity .15s ease, visibility 0s linear .15s; }
+  .aegis_nav_sub::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 22px; }  /* stays open on the way down */
+  .aegis_has_sub:hover > .aegis_nav_sub, .aegis_has_sub:focus-within > .aegis_nav_sub, .aegis_has_sub.is-open > .aegis_nav_sub {
+    visibility: visible; opacity: 1; transition-delay: 0s; }
+  .aegis_has_sub.is-closed > .aegis_nav_sub { visibility: hidden; opacity: 0; }   /* after Escape, until the pointer or focus leaves */
+  .aegis_nav_sub > li { display: flex; margin: 0; padding: 0; }
+  .aegis_nav_sub_link { flex: 1; display: flex; align-items: center; gap: 14px; padding: 8px; border-radius: 12px; color: #fff;
+    font-size: 15px; font-weight: 500; line-height: 1.3; text-align: left; text-decoration: none; text-transform: none;
+    transition: background-color .15s ease; }
+  .aegis_nav_sub_link:hover { background-color: rgba(255, 255, 255, .08); color: #fff; text-decoration: none; }
+  .aegis_nav_sub_link.is-current { background-color: rgba(162, 201, 69, .14); box-shadow: inset 0 0 0 1px var(--aegis-green); }
+  .aegis_nav_sub_link:focus-visible, .aegis_nav_sub_more:focus-visible { outline: 2px solid var(--aegis-green); outline-offset: -2px; }
+  .aegis_nav_sub_img { flex: none; width: 56px; height: 56px; border-radius: 10px; object-fit: cover; background-color: #2a2a2a; }
+  .aegis_nav_sub .aegis_nav_sub_all { grid-column: 1 / -1; margin-top: 6px; padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, .12); }
+  .aegis_nav_sub_more { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 12px 10px;
+    border-radius: 10px; color: var(--aegis-green); font-size: 14px; font-weight: 600; letter-spacing: .04em;
+    text-transform: uppercase; text-decoration: none; transition: background-color .15s ease; }
+  .aegis_nav_sub_more::after { content: ""; width: 7px; height: 7px; margin-right: 6px; border: solid currentColor;
+    border-width: 1.5px 1.5px 0 0; transform: rotate(45deg); }
+  .aegis_nav_sub_more:hover { background-color: rgba(255, 255, 255, .08); color: var(--aegis-green); text-decoration: none; }
+}
+@media (min-width: 992px) and (prefers-reduced-motion: reduce) {
+  .aegis_nav_sub, .aegis_nav_sub_link, .aegis_has_sub > .nav_link_wrapper > .nav_link::after { transition: none; }
+}
 /* footer: tap the address for Google Maps, the number to call, the email to write */
 .footer_contact_info_wrapper.aegis_footer_contact { color: inherit; text-decoration: none; }
 .aegis_footer_contact:hover .body_text_medium, .aegis_footer_contact:focus-visible .body_text_medium {
