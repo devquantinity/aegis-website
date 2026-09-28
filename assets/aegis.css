@@ -24,6 +24,9 @@
 .primary_button:where(.w-variant-395f4269-11e6-b6b4-94bb-62b18120d117) .button_text,
 .secondary_button .button_text { color: var(--aegis-ink) !important; }
 .secondary_button:hover { background-color: var(--aegis-green-deep) !important; }
+/* the small house icon in the buttons: at rest a sliver of it showed at the left end of every button,
+   so it is hidden (hovering still turns the button green) */
+.primary_button .button_svg_wrapper { display: none; }
 
 /* Aegis header + products enhancements */
 .navbar { transition: background-color .25s ease, box-shadow .25s ease; }
@@ -168,6 +171,7 @@
   .home_service_section .w-dropdown-list.w--open .service_dropdown_image_wrapper { width: 100%; }
   .home_service_section .w-dropdown-list.w--open .aegis_stat { margin-left: 0; }
   .home_service_section .w-dropdown-list.w--open .service_button_wrapper { padding-left: 0; }
+  .home_service_section .w-dropdown-list.w--open .faq-answer-text { padding-left: 0; }
   .aegis_stat_num { font-size:30px; }
   .aegis_stat_label { letter-spacing:.1em; }
   .aegis_glance { margin-top: 60px; }
@@ -212,6 +216,13 @@
 .aegis_wa_float.aegis_wa_mobile { display: none; }
 @media (max-width: 767px) { .aegis_wa_float.aegis_wa_mobile { display: inline-flex; } }
 @media print { .aegis_wa_float { display: none; } }
+
+/* homepage "Our Materials" title: on tablets and phones the Get a Free Quote button covered the bottom of
+   the words, so there it sits under the title (on laptops it stays the tilted sticker from the template) */
+@media (max-width: 991px) {
+  .title_section .ttile_wrapper { flex-direction: column; align-items: center; row-gap: 22px; }
+  .title_section .title_button_wrapper { position: static; order: 2; transform: none; }
+}
 
 /* never show Webflow's "Made in Webflow" badge, even if a page still carries a webflow.io domain */
 .w-webflow-badge { display: none !important; }
@@ -392,6 +403,53 @@
 /* aegis-home-products end */
 
 /* aegis-chrome start: header, phone menu and footer on every page, built by .build/build_chrome.py */
+/* header: always white, with the logo on a flat green tile as on the old website (no colour change on scroll) */
+.navbar, .navbar.aegis-scrolled, .navbar:where(.w-variant-ad61860b-2641-c3e2-a782-34644e472e90) {
+  background-color: #fff !important; background-image: none !important; }
+.navbar.aegis-scrolled { box-shadow: 0 2px 14px rgba(0, 0, 0, .08) !important; }
+.navbar .site_logo_wrapper, .navbar.aegis-scrolled .site_logo_wrapper { background: #A2C945 !important; border-radius: 0;
+  padding: 10px 18px; flex-shrink: 0; width: auto !important; max-width: none !important; }   /* the tile hugs the logo, so it sits centred */
+.navbar .site_logo { width: 120px !important; max-width: none; }   /* live site: 104px; Aegis asked for slightly bigger */
+.navbar .w-nav-button, .navbar.aegis-scrolled .w-nav-button, .navbar.aegis-scrolled .menu_icon { color: var(--aegis-ink) !important; }
+/* the line under a menu word shows on hover only. The template's script hides the lines once it runs, so
+   until then (a slow connection) all four words were underlined; these rules hide them from the start */
+.navbar .nav_link_wrapper > .nav_border:not([style]) { width: 0%; transition: width .3s ease; }
+@media (min-width: 992px) and (hover: hover) {
+  .navbar .nav_link_wrapper:hover > .nav_border:not([style]) { width: 100%; }
+}
+@media (min-width: 992px) {
+  .navbar .navbar_wrapper { padding-top: 10px; padding-bottom: 10px; }
+  /* menu words 16px on every laptop, as on the live site (Irfan preferred it to the bigger 18px) */
+  .navbar .nav_link, .navbar.aegis-scrolled .nav_link { color: var(--aegis-ink) !important; font-size: 16px; white-space: nowrap; }
+  /* the menu sits where the template puts it: a wide gap before the button (the template's 20 to 26vw), any spare
+     room before the menu. The gap is a spacer that gives way on tighter screens, where the template squeezed the
+     menu instead and the words wrapped onto two lines (Safari did) */
+  .navbar .nav_menu_wrapper, .navbar .nav_menu_wrapper:where(.w-variant-ad61860b-2641-c3e2-a782-34644e472e90) {
+    flex: 1 1 auto; width: auto; max-width: none; justify-content: flex-start; column-gap: 0; grid-column-gap: 0; }
+  .navbar .nav_menu { order: 1; flex: 0 0 auto; flex-wrap: nowrap; margin-left: auto; }
+  .navbar .nav_menu_wrapper::after { content: ""; display: block; order: 2; flex: 0 1 20vw; min-width: 40px; }
+  .navbar .nav_button_wrapper { order: 3; flex: 0 0 auto; }
+}
+@media (min-width: 992px) and (max-width: 1279px) {   /* small laptops: a little more width for the header */
+  .navbar .container { width: 94%; }
+  .navbar .site_logo { width: 112px !important; }
+}
+@media (min-width: 1280px) {
+  .navbar .nav_menu_wrapper::after { flex-basis: 23vw; }
+  .navbar .nav_menu_wrapper.w-variant-ad61860b-2641-c3e2-a782-34644e472e90::after { flex-basis: 20vw; }
+}
+@media (min-width: 1440px) {
+  .navbar .nav_menu_wrapper::after { flex-basis: 26vw; }
+  .navbar .nav_menu_wrapper.w-variant-ad61860b-2641-c3e2-a782-34644e472e90::after { flex-basis: 24vw; }
+}
+@media (min-width: 1920px) {
+  .navbar .nav_menu_wrapper::after, .navbar .nav_menu_wrapper.w-variant-ad61860b-2641-c3e2-a782-34644e472e90::after { flex-basis: 454px; }
+}
+@media (max-width: 991px) {
+  .navbar .navbar_wrapper { padding-top: 12px; padding-bottom: 12px; }
+  .navbar .site_logo_wrapper, .navbar.aegis-scrolled .site_logo_wrapper { padding: 7px 12px; }
+  .navbar .site_logo { width: 100px !important; }   /* live site: 92px */
+}
 @media (max-width: 991px) {
   /* header pinned to the top on phones and tablets too, slimmer once the page is scrolled */
   .navbar, .navbar:where(.w-variant-ad61860b-2641-c3e2-a782-34644e472e90) { position: sticky !important; top: 0;
