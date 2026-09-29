@@ -403,14 +403,16 @@
 /* aegis-home-products end */
 
 /* aegis-chrome start: header, phone menu and footer on every page, built by .build/build_chrome.py */
-/* header: always white, with the logo on a flat green tile as on the old website (no colour change on scroll) */
+/* header: flat green with the white logo and white menu words, like the old website (Aegis's design).
+   The same at the top of the page and when scrolled: no colour change */
 .navbar, .navbar.aegis-scrolled, .navbar:where(.w-variant-ad61860b-2641-c3e2-a782-34644e472e90) {
-  background-color: #fff !important; background-image: none !important; }
-.navbar.aegis-scrolled { box-shadow: 0 2px 14px rgba(0, 0, 0, .08) !important; }
-.navbar .site_logo_wrapper, .navbar.aegis-scrolled .site_logo_wrapper { background: #A2C945 !important; border-radius: 0;
-  padding: 10px 18px; flex-shrink: 0; width: auto !important; max-width: none !important; }   /* the tile hugs the logo, so it sits centred */
+  background-color: var(--aegis-green) !important; background-image: none !important; }
+.navbar.aegis-scrolled { box-shadow: 0 2px 14px rgba(0, 0, 0, .12) !important; }
+.navbar .site_logo_wrapper, .navbar.aegis-scrolled .site_logo_wrapper { background: transparent !important; border-radius: 0;
+  padding: 10px 18px; flex-shrink: 0; width: auto !important; max-width: none !important; }
 .navbar .site_logo { width: 120px !important; max-width: none; }   /* live site: 104px; Aegis asked for slightly bigger */
-.navbar .w-nav-button, .navbar.aegis-scrolled .w-nav-button, .navbar.aegis-scrolled .menu_icon { color: var(--aegis-ink) !important; }
+.navbar .w-nav-button, .navbar.aegis-scrolled .w-nav-button, .navbar .menu_icon { color: #fff !important; }
+.navbar .menu_button .top_line, .navbar .menu_button .middle_line, .navbar .menu_button .bottom_line { background-color: #fff; }
 /* the line under a menu word shows on hover only. The template's script hides the lines once it runs, so
    until then (a slow connection) all four words were underlined; these rules hide them from the start */
 .navbar .nav_link_wrapper > .nav_border:not([style]) { width: 0%; transition: width .3s ease; }
@@ -420,7 +422,12 @@
 @media (min-width: 992px) {
   .navbar .navbar_wrapper { padding-top: 10px; padding-bottom: 10px; }
   /* menu words 16px on every laptop, as on the live site (Irfan preferred it to the bigger 18px) */
-  .navbar .nav_link, .navbar.aegis-scrolled .nav_link { color: var(--aegis-ink) !important; font-size: 16px; white-space: nowrap; }
+  .navbar .nav_link, .navbar.aegis-scrolled .nav_link { color: #fff !important; font-size: 16px; white-space: nowrap; }
+  .navbar .nav_link.w--current { -webkit-text-decoration-color: #fff; text-decoration-color: #fff; }
+  .navbar .nav_border { background-color: #fff; }
+  /* the black button turned green on hover, the colour of the header, so here it turns white instead */
+  .navbar .nav_button_wrapper .primary_button:hover { background-color: #fff !important; }
+  .navbar .nav_button_wrapper .primary_button:hover .button_text { color: var(--aegis-ink) !important; }
   /* the menu sits where the template puts it: a wide gap before the button (the template's 20 to 26vw), any spare
      room before the menu. The gap is a spacer that gives way on tighter screens, where the template squeezed the
      menu instead and the words wrapped onto two lines (Safari did) */
@@ -453,7 +460,7 @@
 @media (max-width: 991px) {
   /* header pinned to the top on phones and tablets too, slimmer once the page is scrolled */
   .navbar, .navbar:where(.w-variant-ad61860b-2641-c3e2-a782-34644e472e90) { position: sticky !important; top: 0;
-    background-color: #fff; }
+    background-color: var(--aegis-green); }
   .navbar .navbar_wrapper { transition: padding .25s ease; }
   .navbar.aegis-scrolled .navbar_wrapper { padding-top: 10px; padding-bottom: 10px; }
   /* the menu behind the hamburger: left aligned, scrolls if it is taller than the screen */
