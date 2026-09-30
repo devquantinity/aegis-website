@@ -1,22 +1,23 @@
-/* Aegis: product hotspots on the homepage photo (IKEA style). No dependencies.
+/* Aegis: product hotspots on the homepage pictures (IKEA style). No dependencies.
    Markup and styles: .build/build_home_look.py writes the section into index.html and the
-   "aegis-look" block into assets/aegis.css. Each dot sits on a point of the photo given as a
-   fraction of its width and height (data-x, data-y), mapped with the same maths as
-   object-fit: cover, so it stays on the product at every screen size. */
+   "aegis-look" block into assets/aegis.css. Each dot sits on a point of the picture given as a
+   fraction of its width and height (data-x, data-y). On laptops the picture fills the frame (the
+   same maths as object-fit: cover), so a dot stays on its product at every screen size. When the
+   frame is narrower than the picture (phones, tablets), the picture keeps its full width and can be
+   swiped sideways instead of being cut off, so every dot stays and none of them crowd. */
 (function () {
   'use strict';
   var root = document.querySelector('.aegis_look');
   if (!root) return;
   var stage = root.querySelector('.aegis_look_stage');
+  var scroller = root.querySelector('.aegis_look_scroller') || stage;
   var scenes = Array.prototype.slice.call(root.querySelectorAll('.aegis_look_scene'));
-  var count = root.querySelector('.aegis_look_count');
-  var prev = root.querySelector('.aegis_look_prev');
-  var next = root.querySelector('.aegis_look_next');
-  var nav = root.querySelector('.aegis_look_nav');
+  var tabs = Array.prototype.slice.call(root.querySelectorAll('.aegis_look_tab'));
   var intro = root.querySelector('.aegis_look_intro');
   var chips = Array.prototype.slice.call(root.querySelectorAll('.aegis_look_chip'));
   var canHover = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
-  var current = 0, open = null, opener = null, closeTimer = null;
+  var current = 0, open = null, opener = null, closeTimer = null, pan = false, seen = false;
+  var hinted = [];
   if (!stage || !scenes.length) return;
   if (canHover) root.classList.add('aegis_look_can_hover');   // the intro says "hover" or "tap"
 
@@ -30,16 +31,14 @@
     return el.closest('.aegis_look_spot');
   }
 
-  // on desktops the intro panel sits over the photo: its box (in photo coordinates, with a margin)
-  function block() {
-    if (!intro || getComputedStyle(intro).position !== 'absolute') return null;
-    var a = intro.getBoundingClientRect(), b = stage.getBoundingClientRect();
-    return { l: a.left - b.left - 8, t: a.top - b.top - 8, r: a.right - b.left + 8, b: a.bottom - b.top + 8 };
-  }
-
   function num(el, name, fallback) {
     var v = parseFloat(el.getAttribute(name));
     return isNaN(v) ? fallback : v;
+  }
+
+  // what part of the picture is on screen (in the picture's own coordinates when it can be swiped)
+  function view() {
+    return { left: pan ? scroller.scrollLeft : 0, W: stage.clientWidth, H: stage.clientHeight };
   }
 
   function place(scene) {
@@ -48,37 +47,57 @@
     root.classList.toggle('aegis_look_narrow', W < 560);
     var w = num(scene, 'data-w', 1), h = num(scene, 'data-h', 1);
     var fx = num(scene, 'data-fx', 0.5), fy = num(scene, 'data-fy', 0.5);
-    var s = Math.max(W / w, H / h), dw = w * s, dh = h * s;
-    var ox = (W - dw) * fx, oy = (H - dh) * fy, edge = 22, bk = block();
+    var wide = H * w / h;                                  // the picture's width at the frame's height
+    var was = pan;
+    pan = wide > W * 1.02;
+    root.classList.toggle('aegis_look_pan', pan);
+    var dw, dh, ox, oy, sw;
+    if (pan) {                                             // the whole picture, swiped sideways
+      dw = wide; dh = H; ox = 0; oy = 0; sw = dw;
+      scene.style.width = Math.round(dw) + 'px';
+    } else {                                               // cover: fills the frame, cut where it overflows
+      var s = Math.max(W / w, H / h);
+      dw = w * s; dh = h * s; ox = (W - dw) * fx; oy = (H - dh) * fy; sw = W;
+      scene.style.width = '';
+      scroller.scrollLeft = 0;
+    }
+    var edge = 20;
     var spots = scene.querySelectorAll('.aegis_look_spot');
     for (var i = 0; i < spots.length; i++) {
       var sp = spots[i];
       var x = ox + num(sp, 'data-x', 0.5) * dw, y = oy + num(sp, 'data-y', 0.5) * dh;
-      sp.hidden = !(x >= edge && x <= W - edge && y >= edge && y <= H - edge) ||   // cropped out at this size
-                  !!(bk && x > bk.l && x < bk.r && y > bk.t && y < bk.b);          // or under the intro panel
+      sp.hidden = !(x >= edge && x <= sw - edge && y >= edge && y <= H - edge);   // cut off at this size
       sp.style.left = x.toFixed(1) + 'px';
       sp.style.top = y.toFixed(1) + 'px';
     }
+    if (pan && !was) centre(scene);
     if (open) fit(open);
   }
 
-  // Where the card goes: beside its dot on wide photos (the side with room), under or over it on
-  // narrow ones, always inside the photo and clear of the photo controls and, on phones, the
-  // floating WhatsApp button. Works from layout sizes, so the opening animation cannot throw it off.
+  // swipeable picture: show the part with the open card's dot, or else the middle
+  function centre(scene) {
+    if (!pan) return;
+    var W = stage.clientWidth, sw = scene.offsetWidth;
+    var target = scene.querySelector('.aegis_look_spot.is-open') || scene.querySelector('.aegis_look_spot[data-open]');
+    var x = target ? parseFloat(target.style.left) : sw / 2;
+    scroller.scrollLeft = Math.max(0, Math.min(sw - W, x - W / 2));
+  }
+
+  // Where the card goes: beside its dot on wide pictures (the side with room), under or over it on
+  // narrow ones, always inside the part of the picture on screen and, on phones, clear of the floating
+  // WhatsApp button. Works from layout sizes, so the opening animation cannot throw it off.
   function fit(sp) {
     var card = sp.querySelector('.aegis_look_card'), dot = sp.querySelector('.aegis_look_dot');
-    var W = stage.clientWidth, H = stage.clientHeight, narrow = W < 560, m = 12;
+    var v = view(), W = v.W, H = v.H, narrow = W < 560, m = 12;
     var x = parseFloat(sp.style.left) || 0, y = parseFloat(sp.style.top) || 0;
     var cw = card.offsetWidth, ch = card.offsetHeight;
     var d = dot.offsetWidth * 0.56 + 12;                 // dot centre to card edge (the dot grows when open)
-    var floor = H - (narrow ? 76 : m);
-    if (nav && nav.offsetHeight) floor = Math.min(floor, nav.offsetTop - 8);
-    var pref = sp.getAttribute('data-side') || (x < W * 0.6 ? 'right' : 'left');
+    var floor = H - (narrow ? 64 : m);
+    var lo = v.left + m, hi = v.left + W - m;            // left and right edges of what is on screen
+    var pref = sp.getAttribute('data-side') || (x - v.left < W * 0.6 ? 'right' : 'left');
     var order = narrow ? ['below', 'above'] : [pref, pref === 'right' ? 'left' : 'right', 'below', 'above'];
-    var bk = block();
-    function cx(v) { return Math.max(m, Math.min(v, W - m - cw)); }
-    function cy(v) { return Math.max(m, Math.min(v, floor - ch)); }
-    function hits(L, T) { return !!bk && L < bk.r && L + cw > bk.l && T < bk.b && T + ch > bk.t; }
+    function cx(val) { return Math.max(lo, Math.min(val, hi - cw)); }
+    function cy(val) { return Math.max(m, Math.min(val, floor - ch)); }
     var best = null;
     for (var i = 0; i < order.length; i++) {
       var side = order[i], L, T;
@@ -86,19 +105,12 @@
       else if (side === 'left') { L = x - d - cw; T = cy(y - ch / 2); }
       else if (side === 'below') { L = cx(x - cw / 2); T = y + d; }
       else { L = cx(x - cw / 2); T = y - d - ch; }
-      // keep clear of the intro panel: slide down (beside the dot) or across (under or over it)
-      if (hits(L, T)) {
-        var vert = side === 'below' || side === 'above';
-        var L2 = vert ? cx(bk.r) : L, T2 = vert ? T : cy(bk.b);
-        if (!hits(L2, T2) && (vert ? (x > L2 + 18 && x < L2 + cw - 18) : (y > T2 + 18 && y < T2 + ch - 18))) { L = L2; T = T2; }
-      }
-      var over = Math.max(0, m - L) + Math.max(0, L + cw - W + m) + Math.max(0, m - T) + Math.max(0, T + ch - floor)
-               + (hits(L, T) ? 400 : 0);
+      var over = Math.max(0, lo - L) + Math.max(0, L + cw - hi) + Math.max(0, m - T) + Math.max(0, T + ch - floor);
       if (!best || over < best.over) best = { side: side, L: L, T: T, over: over };
       if (!over) break;
     }
     var vertical = best.side === 'below' || best.side === 'above';
-    var left = cx(best.L), top = cy(best.T);             // nothing fits (a tiny photo): pull it inside
+    var left = cx(best.L), top = cy(best.T);             // nothing fits (a tiny picture): pull it inside
     // the pointer on the card's edge lines up with the dot
     var caret = Math.max(18, Math.min(vertical ? x - left : y - top, (vertical ? cw : ch) - 18));
     card.setAttribute('data-side', best.side);
@@ -122,7 +134,7 @@
   }
 
   // how: 'hover' = a peek that closes when the pointer leaves, 'click' = stays until closed,
-  // 'start' = the card open when the page loads (stays until the visitor uses the photo)
+  // 'start' = the card open when the page loads (stays until the visitor uses the picture)
   // from: the dot or chip that opened it (focus goes back there on Escape)
   function show(sp, how, from) {
     clearTimeout(closeTimer);
@@ -150,24 +162,39 @@
     else hide(sp);
   }
 
+  // the dots ripple the first time each picture is on screen
+  function hint() {
+    if (!seen || hinted[current]) return;
+    hinted[current] = true;
+    root.classList.remove('is-hinting');
+    void root.offsetWidth;                               // restart the animation
+    root.classList.add('is-hinting');
+    clearTimeout(hint.t);
+    hint.t = setTimeout(function () { root.classList.remove('is-hinting'); }, 3600);
+  }
+
   function go(i) {
     hide();
-    var hadFocus = scenes[current].contains(document.activeElement);
     current = (i + scenes.length) % scenes.length;
     for (var k = 0; k < scenes.length; k++) scenes[k].hidden = k !== current;
-    // fetch the following photo in the background so the next click shows it straight away
-    var upcoming = scenes[(current + 1) % scenes.length].querySelector('img');
-    if (upcoming && upcoming.loading === 'lazy') upcoming.loading = 'eager';
-    if (count) count.textContent = (current + 1) + ' / ' + scenes.length;
-    place(scenes[current]);
-    // keyboard users stay in the carousel: focus moves to the new photo's dot
-    if (hadFocus) {
-      var dot = scenes[current].querySelector('.aegis_look_spot:not([hidden]) .aegis_look_dot');
-      (dot || next || root).focus();
+    for (var t = 0; t < tabs.length; t++) {
+      tabs[t].setAttribute('aria-selected', t === current ? 'true' : 'false');
+      tabs[t].tabIndex = t === current ? 0 : -1;
     }
+    // fetch the other picture in the background so switching shows it straight away
+    for (var n = 0; n < scenes.length; n++) {
+      var im = scenes[n].querySelector('img');
+      if (im && n !== current && im.loading === 'lazy') im.loading = 'eager';
+    }
+    pan = false;                                         // work it out again for this picture
+    place(scenes[current]);
+    centre(scenes[current]);
+    hint();
   }
 
   root.addEventListener('click', function (e) {
+    var tab = e.target.closest('.aegis_look_tab');
+    if (tab) { go(tabs.indexOf(tab)); return; }
     var hot = e.target.closest('.aegis_look_dot, .aegis_look_chip');
     if (hot) {
       var sp = spotOf(hot);
@@ -186,13 +213,22 @@
     if (!inside && open.getAttribute('data-how') === 'start') return;   // Escape somewhere else on the page
     var back = opener;
     hide();
-    if (back && inside) back.focus();                  // keyboard users land back on their dot or tag
+    if (back && inside) back.focus();                  // keyboard users land back on their dot or chip
   });
-  root.addEventListener('keydown', function (e) {
-    if (scenes.length < 2) return;                          // one photo: arrows do nothing
-    if (e.key === 'ArrowRight') go(current + 1);
-    else if (e.key === 'ArrowLeft') go(current - 1);
-  });
+  // tabs: arrow keys move between them (and show that picture), Home and End jump to the ends
+  if (tabs.length) {
+    tabs[0].parentNode.addEventListener('keydown', function (e) {
+      var i = tabs.indexOf(document.activeElement);
+      if (i < 0) return;
+      var to = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0
+             : e.key === 'End' ? tabs.length - 1 : null;
+      if (to === null) return;
+      e.preventDefault();
+      to = (to + tabs.length) % tabs.length;
+      go(to);
+      tabs[to].focus();
+    });
+  }
   if (canHover) {
     // hovering a dot or its chip peeks at the card; leaving both closes it again
     root.addEventListener('mouseover', function (e) {
@@ -210,24 +246,34 @@
       closeTimer = setTimeout(function () { hide(sp); }, 200);
     });
   }
-  if (prev) prev.addEventListener('click', function () { go(current - 1); });
-  if (next) next.addEventListener('click', function () { go(current + 1); });
+  // swiping the picture: the open card follows, and closes once its dot has left the screen
+  var ticking = false;
+  scroller.addEventListener('scroll', function () {
+    if (!pan || !open || ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () {
+      ticking = false;
+      if (!open) return;
+      var v = view(), x = parseFloat(open.style.left) || 0;
+      if (x < v.left + 8 || x > v.left + v.W - 8) hide();
+      else fit(open);
+    });
+  }, { passive: true });
   window.addEventListener('resize', function () { place(scenes[current]); });
   if ('ResizeObserver' in window) {
     var ro = new ResizeObserver(function () { place(scenes[current]); });
     ro.observe(stage);
-    if (intro) ro.observe(intro);
     // cards change size when the web font arrives: keep the open one placed
     var cards = root.querySelectorAll('.aegis_look_card');
     for (var c = 0; c < cards.length; c++) ro.observe(cards[c]);
   }
-  // the first time most of the photo is on screen, the dots ripple twice to show they do something
+  // the first time most of the picture is on screen, the dots ripple twice to show they do something
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       if (!entries[0].isIntersecting) return;
       io.disconnect();
-      root.classList.add('is-hinting');
-      setTimeout(function () { root.classList.remove('is-hinting'); }, 3400);
+      seen = true;
+      hint();
     }, { threshold: 0.5 });
     io.observe(stage);
   }
@@ -236,5 +282,5 @@
   go(0);
   // one card starts open, so visitors see straight away what the dots do
   var first = scenes[current].querySelector('.aegis_look_spot[data-open]');
-  if (first && !first.hidden) { show(first, 'start'); opener = null; }
+  if (first && !first.hidden) { show(first, 'start'); opener = null; centre(scenes[current]); }
 })();

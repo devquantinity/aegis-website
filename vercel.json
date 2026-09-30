@@ -38,6 +38,11 @@
       "permanent": true
     },
     {
+      "source": "/project/multi-wall-hollow-polycarbonate-sheet",
+      "destination": "/project/polycarbonate-roofing-sheets-malaysia#hollow-polycarbonate",
+      "permanent": true
+    },
+    {
       "source": "/project",
       "destination": "/products",
       "permanent": true

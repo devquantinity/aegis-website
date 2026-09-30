@@ -228,15 +228,24 @@
 .w-webflow-badge { display: none !important; }
 
 /* aegis-look start: homepage product hotspots (IKEA style), built by .build/build_home_look.py */
-.full_height_image_section.aegis_look { position: relative; flex-direction: column; align-items: stretch; }
-.aegis_look .full_height_image { position: relative; width: 100%; overflow: hidden; background: #dfe3da none;
-  transform: none !important; }   /* no scroll parallax: dots must stay on their product */
-@media (min-width: 992px) {   /* shorter than the template's full screen; the intro (when above it) adds to it */
-  .full_height_image_section.aegis_look { height: auto; max-height: none; }
-  .aegis_look .full_height_image { flex: none; height: clamp(440px, 70vh, 700px); min-height: 0; max-height: none; } }
+.full_height_image_section.aegis_look { position: relative; flex-direction: column; align-items: stretch; height: auto;
+  max-height: none; }
+.aegis_look .full_height_image { position: relative; flex: none; width: 100%; min-height: 0; max-height: none;
+  overflow: hidden; background: #dfe3da none; transform: none !important; }   /* no scroll parallax: dots stay put */
+/* laptops: the whole picture, up to 88% of the screen's height; phones and tablets: a set height, and the
+   picture can be swiped sideways (assets/aegis-look.js turns that on when the picture is wider than the screen) */
+@media (min-width: 992px) { .aegis_look .full_height_image { height: auto; aspect-ratio: 1670 / 942; max-height: 88vh; } }
+@media (max-width: 991px) { .aegis_look .full_height_image { height: 460px; } }
+@media (max-width: 767px) { .aegis_look .full_height_image { height: 360px; } }
+.aegis_look_scroller { position: absolute; inset: 0; overflow: hidden; }
+.aegis_look_pan .aegis_look_scroller { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.aegis_look_pan .aegis_look_scroller::-webkit-scrollbar { display: none; }
 .aegis_look_scene { position: absolute; inset: 0; margin: 0; }
+.aegis_look_pan .aegis_look_scene { right: auto; overflow: hidden; }   /* its width is the picture's, set by the script;
+   hidden cards past its edge must not make the swipe longer than the picture */
 .aegis_look_img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; display: block;
-  object-fit: cover; object-position: 50% 50%; }
+  object-fit: cover; object-position: 50% 10%; }
 
 /* dots: a soft glass ring with a white centre; hovered or open, the ring turns solid and the centre dark */
 .aegis_look_spot { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2; display: none; }
@@ -254,15 +263,14 @@
 .aegis_look_dot:hover, .aegis_look_spot.is-open .aegis_look_dot { transform: scale(1.12); background: rgba(255, 255, 255, .92); }
 .aegis_look_dot:hover::after, .aegis_look_spot.is-open .aegis_look_dot::after { background: var(--aegis-ink); transform: scale(.86); }
 .aegis_look_dot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-/* the first time the photo scrolls into view, a soft ring ripples out of each dot twice, then stops */
+/* the first time a picture is on screen, a soft ring ripples out of each dot twice, one after another */
 .aegis_look_dot::before { content: ""; position: absolute; inset: -2px; border: 2px solid rgba(255, 255, 255, .95);
   border-radius: 50%; opacity: 0; pointer-events: none; }
-.aegis_look.is-hinting .aegis_look_dot::before { animation: aegis-look-ping 1.4s cubic-bezier(.2, .6, .35, 1) 2; }
-.aegis_look.is-hinting .aegis_look_spot:nth-of-type(2) .aegis_look_dot::before { animation-delay: .18s; }
-.aegis_look.is-hinting .aegis_look_spot:nth-of-type(3) .aegis_look_dot::before { animation-delay: .36s; }
+.aegis_look.is-hinting .aegis_look_dot::before { animation: aegis-look-ping 1.4s cubic-bezier(.2, .6, .35, 1) 2;
+  animation-delay: calc(var(--i, 0) * .1s); }
 @keyframes aegis-look-ping { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(2.3); } }
 
-/* product card: assets/aegis-look.js puts it beside the dot (or under / over it on narrow photos),
+/* product card: assets/aegis-look.js puts it beside the dot (or under / over it on narrow pictures),
    sets data-side and --caret (where the pointer sits along the edge facing the dot) */
 .aegis_look_card { position: absolute; left: 30px; top: -50px; z-index: 3; box-sizing: border-box; display: flex;
   align-items: center; gap: 14px; width: max-content; max-width: 360px; padding: 10px 20px 10px 10px;
@@ -302,30 +310,30 @@
   transition: transform .2s ease, background-color .2s ease, color .2s ease; }
 .aegis_look_card:hover .aegis_look_card_cta svg, .aegis_look_card:focus-visible .aegis_look_card_cta svg {
   transform: translateX(3px); background: var(--aegis-green-deep); color: #fff; }
-.aegis_look_nav { position: absolute; left: 24px; bottom: 24px; z-index: 4; display: none; align-items: center; gap: 8px;
-  padding: 6px; border-radius: 999px; background: rgba(255, 255, 255, .94); box-shadow: 0 4px 16px rgba(0, 0, 0, .18); }
-.aegis_look.is-ready .aegis_look_nav { display: flex; }
-.aegis_look_prev, .aegis_look_next { width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%;
-  background: var(--aegis-ink); color: #fff; display: grid; place-items: center; cursor: pointer; }
-.aegis_look_prev:hover, .aegis_look_next:hover { background: #333; }
-.aegis_look_prev:focus-visible, .aegis_look_next:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
-.aegis_look_count { min-width: 46px; text-align: center; font-size: 14px; font-weight: 600; color: var(--aegis-ink); }
-/* intro: above the photo on phones, tablets and small laptops; a glass panel on the sky (left of the roof)
-   where the screen is wide enough to leave room for it */
+
+/* intro above the picture: kicker, title, the tabs, and what to do */
 .aegis_look_intro { box-sizing: border-box; padding: 10px 20px 22px; color: var(--aegis-ink); text-align: center; }
 .aegis_look_intro_kicker { margin: 0 0 6px; font-size: 12px; font-weight: 700; line-height: 1.2; letter-spacing: .1em;
   text-transform: uppercase; color: #56731C; }
 .aegis_look_intro_title { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em;
   text-transform: none; color: var(--aegis-ink); }
-.aegis_look_intro_hint { display: none; align-items: center; justify-content: center; gap: 8px; margin: 8px 0 0; font-size: 14px; font-weight: 500;
-  line-height: 1.4; color: #404040; }
+.aegis_look_intro_hint { display: none; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px;
+  margin: 10px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; color: #404040; }
 .aegis_look.is-ready .aegis_look_intro_hint { display: flex; }
 .aegis_look_hint_icon { flex: none; position: relative; width: 18px; height: 18px; border-radius: 50%; background: #d5dbcc; }
 .aegis_look_hint_icon::after { content: ""; position: absolute; left: 5px; top: 5px; width: 8px; height: 8px; border-radius: 50%;
   background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
-.aegis_look_hint_tap { display: none; }
+.aegis_look_hint_tap, .aegis_look_hint_pan { display: none; }
 .aegis_look:not(.aegis_look_can_hover) .aegis_look_hint_hover { display: none; }
 .aegis_look:not(.aegis_look_can_hover) .aegis_look_hint_tap { display: inline; }
+.aegis_look.aegis_look_pan .aegis_look_hint_pan { display: inline; }
+.aegis_look_tabs { display: inline-flex; gap: 4px; margin-top: 16px; padding: 4px; border-radius: 999px; background: #eef1e8; }
+.aegis_look_tab { margin: 0; padding: 9px 18px; border: 0; border-radius: 999px; background: transparent; color: var(--aegis-ink);
+  font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease; }
+.aegis_look_tab:hover { background: rgba(16, 16, 16, .08); }
+.aegis_look_tab[aria-selected="true"] { background: var(--aegis-ink); color: #fff; }
+.aegis_look_tab:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
 .aegis_look_chips { display: none; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
 .aegis_look.is-ready .aegis_look_chips { display: flex; }
 .aegis_look_chip { display: inline-flex; align-items: center; gap: 7px; margin: 0; padding: 8px 13px 8px 10px;
@@ -341,36 +349,20 @@
 @media (min-width: 768px) {
   .aegis_look_intro { padding: 4px 40px 26px; }
   .aegis_look_intro_title { font-size: 26px; } }
-@media (min-width: 992px) {
-  .aegis_look_intro { text-align: left; }
-  .aegis_look_intro_hint, .aegis_look_chips { justify-content: flex-start; } }
-@media (min-width: 992px) and (max-width: 1359px) {   /* one row: title left, hint and chips right */
-  .aegis_look_intro { display: grid; grid-template-columns: 1fr auto; column-gap: 40px; align-items: end;
+@media (min-width: 992px) {   /* one row: kicker and title on the left, tabs and hint on the right */
+  .aegis_look_intro { display: grid; grid-template-columns: 1fr auto; column-gap: 40px; align-items: end; text-align: left;
     padding: 0 calc(8.5% + 20px) 28px; }
   .aegis_look_intro_kicker { grid-area: 1 / 1; }
   .aegis_look_intro_title { grid-area: 2 / 1; }
-  .aegis_look_intro_hint { grid-area: 1 / 2; justify-content: flex-end; margin: 0 0 10px; }
-  .aegis_look_chips { grid-area: 2 / 2; justify-content: flex-end; margin: 0; } }
-@media (min-width: 1360px) {
-  .aegis_look_intro { position: absolute; left: 24px; top: 24px; z-index: 2; max-width: 360px; padding: 16px 18px 18px;
-    border-radius: 16px; background: rgba(255, 255, 255, .84); -webkit-backdrop-filter: blur(12px) saturate(1.4);
-    backdrop-filter: blur(12px) saturate(1.4);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, .5), 0 14px 34px -14px rgba(16, 16, 16, .4); }
-  .aegis_look_intro_title { font-size: 22px; }
-  .aegis_look_chips { gap: 6px; }
-  .aegis_look_chip { padding: 7px 11px 7px 9px; } }
-@media (min-width: 1600px) {
-  .aegis_look_intro { left: 40px; top: 36px; max-width: 380px; padding: 18px 20px 20px; }
-  .aegis_look_intro_title { font-size: 24px; } }
+  .aegis_look_tabs, .aegis_look_chips { grid-area: 1 / 2; justify-self: end; margin: 0 0 10px; }
+  .aegis_look_intro_hint { grid-area: 2 / 2; justify-content: flex-end; margin: 0; } }
 .aegis_sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0);
   white-space: nowrap; border: 0; }
 @media (max-width: 767px) {
-  .aegis_look_nav { left: 12px; bottom: 12px; padding: 4px; gap: 4px; }
-  .aegis_look_prev, .aegis_look_next { width: 34px; height: 34px; }
   .aegis_look_dot { left: -14px; top: -14px; width: 28px; height: 28px; }
   .aegis_look_dot::after { width: 12px; height: 12px; margin: -6px 0 0 -6px; }
 }
-/* narrow photos (phones): a slimmer card, centred under or over its dot */
+/* narrow pictures (phones): a slimmer card, centred under or over its dot */
 .aegis_look_narrow .aegis_look_card { width: min(340px, calc(100vw - 24px)); max-width: none; gap: 12px;
   padding: 8px 14px 8px 8px; border-radius: 12px; }
 .aegis_look_narrow .aegis_look_card_media { width: 58px; height: 58px; border-radius: 8px; }
@@ -381,7 +373,7 @@
 .aegis_look_narrow .aegis_look_card_cta svg { width: 18px; height: 18px; padding: 3px; }
 @media (prefers-reduced-motion: reduce) {
   .aegis_look_dot, .aegis_look_dot::after, .aegis_look_card, .aegis_look_spot.is-open .aegis_look_card,
-  .aegis_look_card_media img, .aegis_look_card_cta svg, .aegis_look_chip, .aegis_look_chip_dot { transition: none; }
+  .aegis_look_card_media img, .aegis_look_card_cta svg, .aegis_look_chip, .aegis_look_chip_dot, .aegis_look_tab { transition: none; }
   .aegis_look.is-hinting .aegis_look_dot::before { animation: none; }
   .aegis_look_card, .aegis_look_card:hover .aegis_look_card_media img,
   .aegis_look_card:hover .aegis_look_card_cta svg { transform: none; }
@@ -400,7 +392,244 @@
 .aegis_service_img_link { display: contents; }
 .aegis_service_img_link img { cursor: pointer; }
 .aegis_all_products { display: flex; justify-content: center; }
+.aegis_table td.aegis_td_product { white-space: normal; min-width: 210px; }
+.aegis_table td.aegis_td_product a { color: #fff; text-decoration: none; }
+.aegis_table td.aegis_td_product a:hover { color: var(--aegis-green); text-decoration: underline; text-underline-offset: 3px; }
+.aegis_table td.aegis_td_product a:focus-visible { outline: 2px solid var(--aegis-green); outline-offset: 3px; }
 /* aegis-home-products end */
+
+/* aegis-home-copy start: homepage photos, built by .build/build_home_copy.py */
+/* the About photo is Aegis's shopfront (wide): cut to the shape the template's photo had, sign in the middle */
+.counter_image_wrapper .counter_image { aspect-ratio: 1132 / 1166; height: auto; object-fit: cover; object-position: 50% 45%; }
+@media (max-width: 767px) { .counter_image_wrapper .counter_image { aspect-ratio: 7 / 5; } }
+/* aegis-home-copy end */
+
+/* aegis-catalog start: product range pages, built by .build/build_catalog.py */
+.aegis_cat { --cat-line: #e4e6df; --cat-soft: #f5f6f2; --cat-text: #5f5f5f; }
+.aegis_cat > * + * { margin-top: 0; }
+.aegis_cat p { margin: 0 0 16px; font-size: 18px; font-weight: 500; line-height: 1.6; color: var(--cat-text); }
+.aegis_cat a:not(.primary_button):not(.aegis_cat_zoom):not(.aegis_cat_jump_link) { color: var(--aegis-ink); text-decoration: underline;
+  text-decoration-color: var(--aegis-green); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.aegis_cat a:not(.primary_button):not(.aegis_cat_zoom):not(.aegis_cat_jump_link):hover { color: var(--aegis-green-deep); }
+.aegis_cat strong { color: var(--aegis-ink); font-weight: 600; }
+.aegis_cat_lead { padding-top: 8px; }
+.aegis_cat_lead > .aegis_cat_gallery, .aegis_cat_lead > .aegis_cat_checks { margin-top: 28px; }
+/* sections: a line above each, room around it; the link bar and the pinned header stay clear of the heading */
+.aegis_cat_section, .aegis_cat_sub { scroll-margin-top: calc(var(--aegis-head, 106px) + 76px); }
+.aegis_cat_section { margin-top: 64px; padding-top: 56px; border-top: 1px solid var(--cat-line); }
+.aegis_cat_jump + .aegis_cat_section { margin-top: 24px; padding-top: 24px; border-top: 0; }   /* no introduction before it */
+.aegis_cat_sub { margin-top: 48px; padding-top: 44px; border-top: 1px dashed var(--cat-line); }
+.aegis_cat_h2 { margin: 0 0 24px; font-size: 32px; font-weight: 600; line-height: 1.25; text-transform: uppercase; color: var(--aegis-ink); }
+.aegis_cat_h3 { margin: 0 0 20px; font-size: 26px; font-weight: 600; line-height: 1.25; text-transform: uppercase; color: var(--aegis-ink); }
+.aegis_cat_h { margin: 36px 0 16px; font-size: 22px; font-weight: 600; line-height: 1.3; letter-spacing: -.005em;
+  text-transform: none; color: var(--aegis-ink); }
+.aegis_cat .aegis_cat_checks { margin: 28px 0; }
+.aegis_cat .aegis_cat_checks .service_rich_text_heading { margin-bottom: 18px; font-size: 24px; line-height: 1.3; }
+.aegis_cat .aegis_cat_checks .points_wrapper { align-items: flex-start; }
+.aegis_cat .aegis_cat_checks .service_details_svg { margin-top: 4px; }
+.aegis_cat_list { margin: 0 0 18px; padding-left: 22px; }
+.aegis_cat_list li { margin: 0 0 10px; padding-left: 4px; font-size: 18px; font-weight: 500; line-height: 1.6; color: var(--cat-text); }
+.aegis_cat_list li::marker { color: var(--aegis-green-deep); }
+.aegis_cat_note { padding: 14px 18px; border-radius: 12px; background: var(--cat-soft); font-size: 16px !important; }
+.aegis_cat_more { margin-top: 20px !important; font-size: 16px !important; }
+
+/* the bar of links to each section: stays under the header while the page scrolls */
+.aegis_cat_jump { position: sticky; top: var(--aegis-head, 106px); z-index: 20; margin: 0 -20px 8px; padding: 12px 20px;
+  background: rgba(255, 255, 255, .96); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--cat-line); }
+.aegis_cat_jump_inner { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; }
+.aegis_cat_jump_inner::-webkit-scrollbar { display: none; }
+.aegis_cat_jump_label { flex: none; margin-right: 6px; font-size: 13px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: #8a8f84; }
+.aegis_cat_jump_link { flex: none; padding: 8px 14px; border: 1px solid var(--cat-line); border-radius: 999px; background: #fff;
+  color: var(--aegis-ink); font-size: 15px; font-weight: 500; line-height: 1.2; text-decoration: none; white-space: nowrap;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+.aegis_cat_jump_link:hover { border-color: var(--aegis-ink); color: var(--aegis-ink); text-decoration: none; }
+.aegis_cat_jump_link.is-current { border-color: var(--aegis-ink); background: var(--aegis-ink); color: #fff; }
+.aegis_cat_jump_link:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
+
+/* pictures: a grid of tiles; photos fill their tile, charts and drawings are shown whole on white */
+.aegis_cat_gallery { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 14px; margin: 24px 0; }
+.aegis_cat_gallery[data-cols="1"] { --cols: 1; }
+.aegis_cat_gallery[data-cols="2"] { --cols: 2; }
+.aegis_cat_gallery[data-cols="3"] { --cols: 3; }
+.aegis_cat_gallery[data-cols="4"] { --cols: 4; }
+.aegis_cat_gallery[data-cols="5"] { --cols: 5; }
+.aegis_cat_fig { margin: 0; min-width: 0; }
+.aegis_cat_zoom { position: relative; display: block; overflow: hidden; border-radius: 14px; background: var(--cat-soft);
+  aspect-ratio: 4 / 3; cursor: zoom-in; }
+.aegis_cat_zoom img { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; transition: transform .4s ease; }
+.aegis_cat_fig[data-kind="chart"] .aegis_cat_zoom { background: #fff; box-shadow: inset 0 0 0 1px var(--cat-line); }
+.aegis_cat_fig[data-kind="chart"] .aegis_cat_zoom img { object-fit: contain; padding: 8px; box-sizing: border-box; }
+.aegis_cat_zoom:hover img { transform: scale(1.03); }
+.aegis_cat_fig[data-kind="chart"] .aegis_cat_zoom:hover img { transform: none; }
+.aegis_cat_zoom:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 3px; }
+.aegis_cat_zoom_icon { position: absolute; right: 10px; bottom: 10px; width: 34px; height: 34px; padding: 7px; box-sizing: border-box;
+  border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--aegis-ink); box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+  opacity: 0; transition: opacity .2s ease; }
+.aegis_cat_zoom:hover .aegis_cat_zoom_icon, .aegis_cat_zoom:focus-visible .aegis_cat_zoom_icon { opacity: 1; }
+@media (hover: none) { .aegis_cat_zoom_icon { opacity: .9; width: 30px; height: 30px; padding: 6px; } }
+/* a picture on its own: shown whole, as tall as it needs up to a limit */
+.aegis_cat_single .aegis_cat_zoom { aspect-ratio: auto; background: var(--cat-soft); }
+.aegis_cat_single .aegis_cat_zoom img { width: 100%; height: auto; max-height: 560px; object-fit: contain; }   /* its height is known
+   before it loads (width and height attributes), so nothing below moves when it arrives */
+.aegis_cat_single .aegis_cat_fig[data-kind="chart"] .aegis_cat_zoom img { max-height: 720px; }
+.aegis_cat_fig figcaption { margin-top: 8px; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--aegis-ink); }
+.aegis_cat_gallery_caption { margin: -12px 0 24px !important; font-size: 14px !important; font-weight: 600 !important;
+  color: var(--aegis-ink) !important; }
+
+/* tables */
+.aegis_cat_table_title { margin-top: 32px; }
+.aegis_cat_table_wrap { margin: 16px 0 24px; overflow-x: auto; border: 1px solid var(--cat-line); border-radius: 14px; }
+.aegis_cat_table_wrap:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
+.aegis_cat_table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.5; color: var(--cat-text); }
+.aegis_cat_table th, .aegis_cat_table td { padding: 12px 16px; text-align: left; vertical-align: top; border-top: 1px solid var(--cat-line); }
+.aegis_cat_table thead th { border-top: 0; background: var(--aegis-green-soft); color: var(--aegis-ink); font-size: 14px;
+  font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.aegis_cat_table tbody tr:first-child > * { border-top: 0; }
+.aegis_cat_table thead + tbody tr:first-child > * { border-top: 1px solid var(--cat-line); }
+.aegis_cat_table tbody th { color: var(--aegis-ink); font-weight: 600; }
+.aegis_cat_table td { font-weight: 500; }
+.aegis_cat_specs tbody th { width: 34%; background: var(--cat-soft); }
+.aegis_cat_table_wide .aegis_cat_table { min-width: 640px; }
+.aegis_cat .aegis_cat_swipe { display: none; }
+@media (min-width: 768px) { .aegis_cat_table tbody th { white-space: nowrap; } }
+
+/* installation steps */
+.aegis_cat_steps { margin: 20px 0 8px; padding: 0; list-style: none; counter-reset: none; }
+.aegis_cat_step { display: flex; gap: 16px; margin: 0 0 18px; }
+.aegis_cat_step_num { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  background: var(--aegis-green); color: var(--aegis-ink); font-size: 16px; font-weight: 700; }
+.aegis_cat_step_title { display: block; margin: 6px 0 6px; font-size: 18px; font-weight: 600; color: var(--aegis-ink); }
+.aegis_cat_step_text p { margin: 0; }
+.aegis_cat_caution { margin: 24px 0; padding: 20px 22px 6px; border-radius: 14px; background: #fff7e6;
+  box-shadow: inset 4px 0 0 #e0a100; }
+.aegis_cat_caution_title { display: flex; align-items: center; gap: 10px; margin: 0 0 12px !important;
+  font-size: 18px !important; font-weight: 700 !important; color: #6b4a00 !important; }
+.aegis_cat_caution_icon { flex: none; width: 24px; height: 24px; color: #c98f00; }
+.aegis_cat_caution ul { margin: 0; padding-left: 20px; }
+.aegis_cat_caution li { margin: 0 0 14px; font-size: 16px; font-weight: 500; line-height: 1.6; color: #5a4a2a; }
+.aegis_cat_caution strong { color: #3d3000; }
+
+/* profiles: a card for each */
+.aegis_cat_profiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 28px 0; }
+.aegis_cat_profile { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--cat-line); border-radius: 16px; background: #fff; }
+.aegis_cat_profile_media { display: grid; gap: 0; background: #fff; border-bottom: 1px solid var(--cat-line); }
+.aegis_cat_profile_media .aegis_cat_zoom { border-radius: 0; aspect-ratio: 16 / 10; background: #fff; }
+.aegis_cat_profile_media .aegis_cat_zoom img { object-fit: contain; padding: 10px; box-sizing: border-box; }
+.aegis_cat_profile_media .aegis_cat_dwg .aegis_cat_zoom { aspect-ratio: auto; height: 96px; border-top: 1px solid var(--cat-line);
+  box-shadow: none; }
+.aegis_cat_profile_body { padding: 18px 20px 6px; }
+.aegis_cat_profile_name { margin: 0 0 10px; font-size: 20px; font-weight: 600; line-height: 1.3; text-transform: none; color: var(--aegis-ink); }
+.aegis_cat_profile_body p { font-size: 16px; line-height: 1.55; }
+.aegis_cat_profile_rows { margin: 4px 0 16px; }
+.aegis_cat_profile_rows > div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--cat-line);
+  font-size: 15px; line-height: 1.4; }
+.aegis_cat_profile_rows dt { color: var(--cat-text); font-weight: 500; }
+.aegis_cat_profile_rows dd { margin: 0; color: var(--aegis-ink); font-weight: 600; text-align: right; }
+
+/* uses: picture beside words */
+.aegis_cat_apps { display: grid; gap: 18px; margin: 28px 0; }
+.aegis_cat_app { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 22px; align-items: start; padding: 18px;
+  border: 1px solid var(--cat-line); border-radius: 16px; }
+.aegis_cat_app_media { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); gap: 8px; }
+.aegis_cat_app_media[data-n="2"] { --n: 2; }
+.aegis_cat_app_media .aegis_cat_zoom { border-radius: 10px; }
+.aegis_cat_app_name { margin: 2px 0 8px; font-size: 20px; font-weight: 600; line-height: 1.3; text-transform: none; color: var(--aegis-ink); }
+.aegis_cat_app_text p { margin: 0; font-size: 16px; line-height: 1.55; }
+
+/* questions and answers: open one at a time or all, no script needed */
+.aegis_cat_faq { margin: 32px 0 8px; }
+.aegis_cat_faq_title { margin-bottom: 8px; }
+.aegis_cat_q { border-bottom: 1px solid var(--cat-line); }
+.aegis_cat_q summary { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 0;
+  cursor: pointer; list-style: none; font-size: 18px; font-weight: 600; line-height: 1.4; color: var(--aegis-ink); }
+.aegis_cat_q summary::-webkit-details-marker { display: none; }
+.aegis_cat_q summary::after { content: ""; flex: none; width: 28px; height: 28px; margin-top: -2px; border-radius: 50%;
+  background: var(--cat-soft) no-repeat center / 14px 14px
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 1v12M1 7h12' stroke='%23101010' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  transition: transform .2s ease, background-color .2s ease; }
+.aegis_cat_q[open] summary::after { transform: rotate(45deg); background-color: var(--aegis-green); }
+.aegis_cat_q summary:hover span { text-decoration: underline; text-decoration-color: var(--aegis-green); text-underline-offset: 3px; }
+.aegis_cat_q summary:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; border-radius: 6px; }
+.aegis_cat_a { padding: 0 44px 12px 0; }
+.aegis_cat_a p, .aegis_cat_a li { font-size: 16px !important; }
+.aegis_cat_a .aegis_cat_gallery { margin: 4px 0 16px; }
+
+/* the closing box: ask for a quotation (the phone number is in the dark band just below it) */
+.aegis_cat_cta { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 72px; padding: 30px 34px;
+  border-radius: 20px; background: var(--aegis-green-soft); box-shadow: inset 0 0 0 1px #dfe9c4; }
+.aegis_cat .aegis_cat_cta p { margin: 0; color: #4a5040; font-size: 16px; }
+.aegis_cat .aegis_cat_cta .aegis_cat_cta_title { margin: 0 0 6px; color: var(--aegis-ink); font-size: 24px; font-weight: 600; line-height: 1.3; }
+.aegis_cat_cta_buttons { flex: none; }
+.aegis_cat_cta_wa { display: inline-flex; align-items: center; gap: 10px; background-color: var(--aegis-ink) !important; }
+.aegis_cat_cta_wa .button_text { color: #fff !important; }
+.aegis_cat_cta_wa .aegis_wa_icon { width: 20px; height: 20px; fill: #fff; }
+.aegis_cat_cta_wa:hover { background-color: var(--aegis-green-deep) !important; }
+
+/* the Products page: every photo in the list the same shape (the ranges' photos come in many shapes) */
+.service_list.service_page .service_image_wrapper { width: 23.281vw; aspect-ratio: 3 / 2; }
+.service_list.service_page .service_image { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+@media (max-width: 991px) { .service_list.service_page .service_image_wrapper { width: 100%; } }
+
+/* a picture opened larger */
+.aegis_lightbox { max-width: none; max-height: none; width: 100vw; height: 100vh; height: 100dvh; margin: 0; padding: 0; border: 0;
+  background: rgba(10, 10, 10, .92); color: #fff; }
+.aegis_lightbox::backdrop { background: rgba(10, 10, 10, .6); }
+.aegis_lightbox[open] { display: flex; align-items: center; justify-content: center; }
+.aegis_lightbox_fig { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 0; padding: 56px 16px 20px;
+  max-width: 100%; max-height: 100%; box-sizing: border-box; }
+.aegis_lightbox_img { display: block; max-width: min(1400px, 100%); max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px);
+  width: auto; height: auto; border-radius: 8px; background: #fff; }
+.aegis_lightbox_cap { max-width: 900px; font-size: 15px; line-height: 1.4; text-align: center; color: #d6dbd0; }
+.aegis_lightbox_close { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
+  background: #fff; color: var(--aegis-ink); cursor: pointer; display: grid; place-items: center; }
+.aegis_lightbox_close svg { width: 18px; height: 18px; }
+.aegis_lightbox_close:focus-visible { outline: 3px solid var(--aegis-green); outline-offset: 2px; }
+html.aegis_lightbox_on { overflow: hidden; }
+
+@media (max-width: 991px) {
+  .aegis_cat p, .aegis_cat_list li { font-size: 16px; }
+  .aegis_cat_section { margin-top: 48px; padding-top: 40px; }
+  .aegis_cat_sub { margin-top: 36px; padding-top: 32px; }
+  .aegis_cat_h2 { font-size: 26px; }
+  .aegis_cat_h3 { font-size: 22px; }
+  .aegis_cat_h { font-size: 20px; }
+  .aegis_cat_app { grid-template-columns: 180px minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  .aegis_cat_jump { margin: 0 -20px 4px; padding: 10px 20px; }
+  .aegis_cat_jump_label { display: none; }
+  .aegis_cat_jump_link { padding: 7px 12px; font-size: 14px; }
+  .aegis_cat_h2 { font-size: 22px; }
+  .aegis_cat_h3 { font-size: 20px; }
+  .aegis_cat_h { font-size: 18px; margin-top: 28px; }
+  .aegis_cat_gallery { gap: 10px; }
+  .aegis_cat_gallery[data-cols="3"], .aegis_cat_gallery[data-cols="4"] { --cols: 2; }
+  .aegis_cat_gallery[data-cols="5"] { --cols: 3; }
+  .aegis_cat_zoom { border-radius: 12px; }
+  .aegis_cat_single .aegis_cat_zoom img { max-height: 420px; }
+  .aegis_cat_table { font-size: 15px; }
+  .aegis_cat_table th, .aegis_cat_table td { padding: 10px 12px; }
+  .aegis_cat_table thead th { font-size: 12px; letter-spacing: .02em; }
+  .aegis_cat .aegis_cat_swipe { display: block; margin: 12px 0 -6px; font-size: 14px; color: #8a8f84; }
+  .aegis_cat_specs tbody th { width: 40%; }
+  .aegis_cat_profiles { grid-template-columns: 1fr; }
+  .aegis_cat_app { grid-template-columns: 1fr; gap: 14px; padding: 14px; }
+  .aegis_cat_app_media { grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); max-width: 420px; }
+  .aegis_cat_q summary { font-size: 16px; padding: 16px 0; }
+  .aegis_cat_a { padding-right: 0; }
+  .aegis_cat_cta { flex-direction: column; align-items: flex-start; margin-top: 48px; padding: 26px 22px; }
+  .aegis_cat .aegis_cat_cta_title { font-size: 20px; }
+  .aegis_cat_step { gap: 12px; }
+  .aegis_cat_step_num { width: 32px; height: 32px; font-size: 15px; }
+  .aegis_cat_step_title { margin-top: 4px; font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aegis_cat_zoom img, .aegis_cat_zoom:hover img, .aegis_cat_q summary::after, .aegis_cat_jump_link { transition: none; transform: none; }
+}
+/* aegis-catalog end */
 
 /* aegis-chrome start: header, phone menu and footer on every page, built by .build/build_chrome.py */
 /* header: flat green with the white logo and white menu words, like the old website (Aegis's design).
@@ -470,7 +699,7 @@
   .navbar .nav_menu { text-align: left; align-items: stretch; }
   .navbar .nav_wrapper { align-self: stretch; }
   .navbar .nav_button_wrapper { justify-content: flex-start; }
-  /* the six products under Products, two per row (the photos and "View all" are for the laptop panel) */
+  /* the eight ranges under Products, two per row (the photos and "View all" are for the laptop panel) */
   .aegis_nav_sub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; padding: 0;
     list-style: none; }
   .aegis_nav_sub > li { display: flex; margin: 0; padding: 0; }
@@ -490,7 +719,7 @@
   .navbar .navbar_wrapper, .menu_button .top_line, .menu_button .middle_line, .menu_button .bottom_line { transition: none; }
 }
 @media (min-width: 992px) {
-  /* laptops: Products opens a panel with the six products (pointing at it, tabbing to it, or a first tap on touch screens) */
+  /* laptops: Products opens a panel with the eight ranges (pointing at it, tabbing to it, or a first tap on touch screens) */
   .aegis_has_sub > .nav_link_wrapper > .nav_link { white-space: nowrap; }
   .aegis_has_sub > .nav_link_wrapper > .nav_link::after { content: ""; display: inline-block; width: 6px; height: 6px;
     margin-left: 8px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: translateY(-3px) rotate(45deg);

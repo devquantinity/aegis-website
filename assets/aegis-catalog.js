@@ -1,0 +1,116 @@
+/* Aegis: product range pages (project/*.html). No dependencies.
+   Markup and styles: .build/build_catalog.py writes the pages and the "aegis-catalog" block in
+   assets/aegis.css.
+   1. The bar of section links stays just under the header (its height changes when the page scrolls
+      on phones), its links scroll to their section, and the link for the section on screen is highlighted.
+   2. A picture opens larger over the page. Without this script, the picture opens on its own. */
+(function () {
+  'use strict';
+  var doc = document.documentElement;
+
+  // 1. the header's height, for the link bar and for where a section lands when its link is used
+  var header = document.querySelector('.navbar');
+  function headHeight() {
+    if (!header) return;
+    var r = header.getBoundingClientRect();
+    doc.style.setProperty('--aegis-head', Math.max(0, Math.round(r.bottom)) + 'px');
+  }
+  headHeight();
+  window.addEventListener('scroll', headHeight, { passive: true });
+  window.addEventListener('resize', headHeight);
+  if (header && 'ResizeObserver' in window) new ResizeObserver(headHeight).observe(header);
+
+  // the link for the section on screen
+  var jump = document.querySelector('.aegis_cat_jump');
+  var bar = document.querySelector('.aegis_cat_jump_inner');
+  var links = bar ? Array.prototype.slice.call(bar.querySelectorAll('.aegis_cat_jump_link')) : [];
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  var current = null;
+  function mark() {
+    var line = (jump ? jump.getBoundingClientRect().bottom : 0) + 40;   // just under the bar of links
+    var pick = -1;
+    for (var i = 0; i < targets.length; i++) {
+      if (targets[i] && targets[i].getBoundingClientRect().top <= line) pick = i;
+    }
+    // at the very bottom of the page the last section counts, even if it is short
+    if (window.innerHeight + window.pageYOffset >= document.body.scrollHeight - 4 && targets.length) pick = targets.length - 1;
+    var a = pick >= 0 ? links[pick] : null;
+    if (a === current) return;
+    if (current) { current.classList.remove('is-current'); current.removeAttribute('aria-current'); }
+    current = a;
+    if (!a) {                                                // above the first section: the bar starts at its beginning
+      if (bar.scrollLeft) bar.scrollTo ? bar.scrollTo({ left: 0, behavior: 'smooth' }) : (bar.scrollLeft = 0);
+      return;
+    }
+    a.classList.add('is-current');
+    a.setAttribute('aria-current', 'true');
+    // keep the highlighted link in view when the bar scrolls sideways (phones)
+    var l = a.offsetLeft - 16, r = a.offsetLeft + a.offsetWidth + 16;
+    if (l < bar.scrollLeft || r > bar.scrollLeft + bar.clientWidth) {
+      bar.scrollTo ? bar.scrollTo({ left: Math.max(0, l), behavior: 'smooth' }) : (bar.scrollLeft = Math.max(0, l));
+    }
+  }
+  // a link in the bar scrolls to its section here (the template's own script would take over the click, and
+  // it stops in the wrong place because it ignores the pinned header and this bar)
+  if (bar) {
+    bar.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a.aegis_cat_jump_link') : null;
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var id = a.getAttribute('href').slice(1), t = document.getElementById(id);
+      if (!t) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      t.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+      if (window.history && history.pushState) history.pushState(null, '', '#' + id);
+      setTimeout(mark, 600); setTimeout(mark, 1400);        // the highlight catches up once the page settles
+    });
+  }
+  if (links.length) {
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () { ticking = false; mark(); });
+    }, { passive: true });
+    window.addEventListener('resize', mark);
+    window.addEventListener('scrollend', mark);
+    mark();
+  }
+
+  // 2. pictures open larger
+  var box = document.createElement('dialog');
+  if (typeof box.showModal !== 'function') return;          // an old browser: the link opens the picture instead
+  box.className = 'aegis_lightbox';
+  box.setAttribute('aria-label', 'Picture');
+  box.innerHTML = '<button class="aegis_lightbox_close" type="button" aria-label="Close">' +
+    '<svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M2 2l14 14M16 2 2 16" stroke="currentColor" ' +
+    'stroke-width="2.2" stroke-linecap="round"/></svg></button>' +
+    '<figure class="aegis_lightbox_fig"><img class="aegis_lightbox_img" alt=""><figcaption class="aegis_lightbox_cap"></figcaption></figure>';
+  document.body.appendChild(box);
+  var big = box.querySelector('.aegis_lightbox_img'), cap = box.querySelector('.aegis_lightbox_cap');
+  var opener = null;
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a.aegis_cat_zoom') : null;
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    var small = a.querySelector('img');
+    big.removeAttribute('src');
+    big.width = +a.getAttribute('data-w') || 0;
+    big.height = +a.getAttribute('data-h') || 0;
+    big.src = a.getAttribute('href');
+    big.alt = small ? small.alt : '';
+    cap.textContent = small ? small.alt : '';
+    opener = a;
+    doc.classList.add('aegis_lightbox_on');
+    box.showModal();
+  });
+  box.addEventListener('click', function (e) {
+    if (e.target === box || e.target.closest('.aegis_lightbox_close') || e.target === box.querySelector('.aegis_lightbox_fig')) box.close();
+  });
+  box.addEventListener('close', function () {
+    doc.classList.remove('aegis_lightbox_on');
+    if (opener) opener.focus();
+  });
+})();
