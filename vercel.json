@@ -43,6 +43,41 @@
       "permanent": true
     },
     {
+      "source": "/project/polycarbonate-sheet",
+      "destination": "/project/polycarbonate-roofing-sheets-malaysia#solid-polycarbonate",
+      "permanent": true
+    },
+    {
+      "source": "/essential_grid/aluminium-composite-panel",
+      "destination": "/project/aluminium-composite-panel",
+      "permanent": true
+    },
+    {
+      "source": "/essential_grid/:path*",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/2016/10/11/the-9-advantages-of-a-polycarbonate-greenhouse-over-a-glass-one",
+      "destination": "/project/polycarbonate-roofing-sheets-malaysia",
+      "permanent": true
+    },
+    {
+      "source": "/news-events/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/category/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/tag/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/project",
       "destination": "/products",
       "permanent": true
@@ -169,6 +204,72 @@
     {
       "source": "/wp-login.php",
       "destination": "/api/gone"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/assets/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/catalog/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    },
+    {
+      "source": "/assets/cdn.prod.website-files.com/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    },
+    {
+      "source": "/assets/d3e54v103j8qbb.cloudfront.net/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "make"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ]
 }

@@ -769,3 +769,16 @@ html.aegis_lightbox_on { overflow: hidden; }
 /* enquiry forms: a field only spam bots fill in */
 .aegis_hp { position: absolute !important; left: -10000px !important; width: 1px; height: 1px; opacity: 0; }
 /* aegis-chrome end */
+
+/* aegis-speed start: built by .build/build_speed.py */
+.contact_1st_image, .contact_2nd_image, .contact_image_no_3, .contact_4th_image { height: auto; }
+/* aegis-speed end */
+
+/* aegis-fonts start: the site's typeface from assets/fonts, built by .build/build_seo.py */
+@font-face { font-family: "Instrument Sans"; src: url("fonts/instrument-sans-latin.woff2?v=9732ef4c") format("woff2");
+  font-weight: 400 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Instrument Sans Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Roboto"), local("Liberation Sans");
+  size-adjust: 102.4%; ascent-override: 94.7%; descent-override: 24.4%; line-gap-override: 0%; }
+:root { --_font---font: "Instrument Sans", "Instrument Sans Fallback", sans-serif; }
+/* aegis-fonts end */

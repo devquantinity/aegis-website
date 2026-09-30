@@ -3,7 +3,10 @@
       The Products menu on laptops closes with Escape and opens with a first tap on touch screens.
    2. Enquiry forms (form.contact_form on the homepage and the Contact page): sent to /api/contact, which
       emails enquiry@ with a copy to the owner. If sending fails, the visitor gets a WhatsApp link with
-      their details already filled in, so no enquiry is lost. */
+      their details already filled in, so no enquiry is lost.
+   3. A video further down a page (marked data-aegis-autoplay by .build/build_speed.py) loads and plays only
+      once it is nearly on screen, so it does not slow the page down. With "reduce motion" on, it keeps
+      its still picture. */
 (function () {
   'use strict';
   var WA = 'https://wa.me/60126088268';
@@ -149,4 +152,23 @@
     e.stopImmediatePropagation();
     send(form);
   }, true);
+
+  // 3. videos further down a page
+  var vids = document.querySelectorAll('video[data-aegis-autoplay]');
+  var start = function (v) {
+    if (mq('(prefers-reduced-motion: reduce)')) return;
+    v.autoplay = true;                          // Webflow's own "reduce motion" switch plays only autoplay videos
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});
+  };
+  if (vids.length && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { io.unobserve(en.target); start(en.target); }
+      });
+    }, { rootMargin: '300px 0px' });
+    Array.prototype.forEach.call(vids, function (v) { io.observe(v); });
+  } else {
+    Array.prototype.forEach.call(vids, start);
+  }
 })();
