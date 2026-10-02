@@ -280,7 +280,9 @@
 
   root.classList.add('is-ready');
   go(0);
-  // one card starts open, so visitors see straight away what the dots do
-  var first = scenes[current].querySelector('.aegis_look_spot[data-open]');
+  // one card starts open, so visitors see straight away what the dots do. Not on phones: there the open card
+  // covered the dots beside it, too close to tap; the dots' ripple shows what they do instead
+  var phone = !!(window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+  var first = phone ? null : scenes[current].querySelector('.aegis_look_spot[data-open]');
   if (first && !first.hidden) { show(first, 'start'); opener = null; centre(scenes[current]); }
 })();

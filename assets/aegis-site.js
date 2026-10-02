@@ -4,9 +4,15 @@
    2. Enquiry forms (form.contact_form on the homepage and the Contact page): sent to /api/contact, which
       emails enquiry@ with a copy to the owner. If sending fails, the visitor gets a WhatsApp link with
       their details already filled in, so no enquiry is lost.
-   3. A video further down a page (marked data-aegis-autoplay by .build/build_speed.py) loads and plays only
-      once it is nearly on screen, so it does not slow the page down. With "reduce motion" on, it keeps
-      its still picture. */
+   3. Videos marked data-aegis-autoplay (by .build/build_speed.py) load and play only once they are nearly on
+      screen, and the homepage's top video (also data-aegis-after-load) only once the page has finished
+      loading, so its 2 MB never holds up the first view: until then its still picture shows. With
+      "reduce motion" on, they keep their still picture. A video's play / pause button (the Contact
+      page's, written by .build/build_a11y.py) follows the video: nothing shows while it plays, a play
+      button while it is stopped.
+   4. Once the page has loaded: pictures marked data-aegis-src get their picture, and scripts marked
+      type="aegis/late" run (in their order). build_speed.py marks them on the homepage, so the first screen
+      gets the phone's whole connection. */
 (function () {
   'use strict';
   var WA = 'https://wa.me/60126088268';
@@ -153,22 +159,65 @@
     send(form);
   }, true);
 
-  // 3. videos further down a page
+  // 3. videos: further down a page, or the homepage's top one once the page has loaded
   var vids = document.querySelectorAll('video[data-aegis-autoplay]');
-  var start = function (v) {
-    if (mq('(prefers-reduced-motion: reduce)')) return;
-    v.autoplay = true;                          // Webflow's own "reduce motion" switch plays only autoplay videos
+  var still = function () { return mq('(prefers-reduced-motion: reduce)'); };
+  var sync = function (v) {                     // the video's button, if it has one, says what the video is doing
+    var btn = v.id && document.querySelector('.aegis_video_toggle[aria-controls="' + v.id + '"]');
+    if (!btn) return;
+    btn.classList.toggle('is-paused', v.paused);
+    btn.setAttribute('aria-label', v.paused ? 'Play video' : 'Pause video');
+  };
+  var play = function (v) {
     var p = v.play();
-    if (p && p.catch) p.catch(function () {});
+    if (p && p.catch) p.catch(function () { sync(v); });   // refused (a phone saving power): the play button shows
+  };
+  var start = function (v) {
+    if (still()) return;
+    v.autoplay = true;                          // Webflow's own "reduce motion" switch plays only autoplay videos
+    play(v);
+  };
+  // the whole video is its button. It follows the video's own play and pause events, so it is right whoever
+  // starts or stops the video: this script, a click, the browser, or Webflow's "reduce motion" switch
+  Array.prototype.forEach.call(document.querySelectorAll('.aegis_video_toggle'), function (btn) {
+    var v = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!v) return;
+    var follow = function () { sync(v); };
+    v.addEventListener('play', follow);
+    v.addEventListener('pause', follow);
+    btn.addEventListener('click', function () { if (v.paused) play(v); else v.pause(); });
+    if (still()) sync(v);                       // it will not start by itself, so its play button shows from the start
+  });
+  var go = function (v) {
+    if (!v.hasAttribute('data-aegis-after-load') || document.readyState === 'complete') { start(v); return; }
+    window.addEventListener('load', function () { setTimeout(function () { start(v); }, 200); });
   };
   if (vids.length && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
-        if (en.isIntersecting) { io.unobserve(en.target); start(en.target); }
+        if (en.isIntersecting) { io.unobserve(en.target); go(en.target); }
       });
     }, { rootMargin: '300px 0px' });
     Array.prototype.forEach.call(vids, function (v) { io.observe(v); });
   } else {
-    Array.prototype.forEach.call(vids, start);
+    Array.prototype.forEach.call(vids, go);
   }
+
+  // 4. pictures and scripts that wait for the page to load
+  var later = function () {
+    Array.prototype.forEach.call(document.querySelectorAll('script[type="aegis/late"]'), function (old) {
+      var js = document.createElement('script');
+      js.src = old.src;
+      js.async = false;                             // in their order: jQuery first
+      old.parentNode.replaceChild(js, old);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('img[data-aegis-src]'), function (img) {
+      var set = img.getAttribute('data-aegis-srcset');
+      if (set) img.setAttribute('srcset', set);
+      img.setAttribute('src', img.getAttribute('data-aegis-src'));
+      img.removeAttribute('data-aegis-srcset');
+      img.removeAttribute('data-aegis-src');
+    });
+  };
+  if (document.readyState === 'complete') later(); else window.addEventListener('load', later);
 })();
