@@ -7,6 +7,12 @@
 (function () {
   'use strict';
   var doc = document.documentElement;
+  // Run fn once the page has been drawn. Measuring the page before its first paint makes the browser lay the
+  // whole page out there and then, a long pause before anything shows.
+  function drawn(fn) {
+    if (window.requestAnimationFrame) window.requestAnimationFrame(function () { setTimeout(fn, 0); });
+    else setTimeout(fn, 0);
+  }
 
   // 1. the header's height, for the link bar and for where a section lands when its link is used
   var header = document.querySelector('.navbar');
@@ -15,10 +21,11 @@
     var r = header.getBoundingClientRect();
     doc.style.setProperty('--aegis-head', Math.max(0, Math.round(r.bottom)) + 'px');
   }
-  headHeight();
   window.addEventListener('scroll', headHeight, { passive: true });
   window.addEventListener('resize', headHeight);
+  // the first measure comes with the first paint (the ResizeObserver's first call), not before it
   if (header && 'ResizeObserver' in window) new ResizeObserver(headHeight).observe(header);
+  else drawn(headHeight);
 
   // the link for the section on screen
   var jump = document.querySelector('.aegis_cat_jump');
@@ -75,7 +82,7 @@
     }, { passive: true });
     window.addEventListener('resize', mark);
     window.addEventListener('scrollend', mark);
-    mark();
+    drawn(mark);                                             // a page opened at one of its sections
   }
 
   // 2. pictures open larger

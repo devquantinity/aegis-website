@@ -259,13 +259,33 @@
       else fit(open);
     });
   }, { passive: true });
-  window.addEventListener('resize', function () { place(scenes[current]); });
+  // The first set-up needs the picture's size on screen. Asking for it while the page is still being read would
+  // make the browser lay the whole page out there and then, before it has drawn anything: a long pause before
+  // the first paint. So the set-up waits for the size to be reported (the ResizeObserver's first call, which
+  // comes with the frame that draws the picture, so nothing shows half set up).
+  var started = false;
+  function start() {
+    if (started) return;
+    started = true;
+    root.classList.add('is-ready');
+    go(0);
+    // one card starts open, so visitors see straight away what the dots do. Not on phones: there the open card
+    // covered the dots beside it, too close to tap; the dots' ripple shows what they do instead
+    var phone = !!(window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+    var first = phone ? null : scenes[current].querySelector('.aegis_look_spot[data-open]');
+    if (first && !first.hidden) { show(first, 'start'); opener = null; centre(scenes[current]); }
+  }
+  window.addEventListener('resize', function () { if (started) place(scenes[current]); });
   if ('ResizeObserver' in window) {
-    var ro = new ResizeObserver(function () { place(scenes[current]); });
+    var ro = new ResizeObserver(function () { if (started) place(scenes[current]); else start(); });
     ro.observe(stage);
     // cards change size when the web font arrives: keep the open one placed
     var cards = root.querySelectorAll('.aegis_look_card');
     for (var c = 0; c < cards.length; c++) ro.observe(cards[c]);
+  } else if (window.requestAnimationFrame) {
+    window.requestAnimationFrame(function () { setTimeout(start, 0); });   // an old browser: once the page is drawn
+  } else {
+    start();
   }
   // the first time most of the picture is on screen, the dots ripple twice to show they do something
   if ('IntersectionObserver' in window) {
@@ -277,12 +297,4 @@
     }, { threshold: 0.5 });
     io.observe(stage);
   }
-
-  root.classList.add('is-ready');
-  go(0);
-  // one card starts open, so visitors see straight away what the dots do. Not on phones: there the open card
-  // covered the dots beside it, too close to tap; the dots' ripple shows what they do instead
-  var phone = !!(window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
-  var first = phone ? null : scenes[current].querySelector('.aegis_look_spot[data-open]');
-  if (first && !first.hidden) { show(first, 'start'); opener = null; centre(scenes[current]); }
 })();

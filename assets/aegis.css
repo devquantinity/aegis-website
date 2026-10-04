@@ -776,6 +776,12 @@ html.aegis_lightbox_on { overflow: hidden; }
 /* the homepage video's still: under the video (which covers it once it plays), cut to fill the box as the video is */
 .hero_video .aegis_hero_still { position: absolute; inset: 0; z-index: -101; width: 100%; height: 100%; max-width: none;
   object-fit: cover; object-position: 50% 50%; }
+/* the homepage on a first visit (html.aegis-quick, set in the head): the sections well below the first screen
+   stay undrawn until assets/aegis-site.js marks them aegis_shown, straight after the first paint. They start
+   two sections after the house and building pictures: the one in between can show on a tall upright screen */
+html.aegis-quick .aegis_look ~ section ~ section:not(.aegis_shown) { content-visibility: auto; contain-intrinsic-size: auto 700px; }
+html.aegis-quick .section_wrapper:has(> .aegis_look) ~ .footer_section:not(.aegis_shown) { content-visibility: auto;
+  contain-intrinsic-size: auto 700px; }
 /* aegis-speed end */
 
 /* aegis-a11y start: built by .build/build_a11y.py (accessibility fixes that keep the look) */
